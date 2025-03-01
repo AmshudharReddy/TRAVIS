@@ -1,0 +1,504 @@
+/* Dashboard.css */
+:root {
+  --primary-color: #4a6fa5;
+  --primary-hover: #3a5a8a;
+  --secondary-color: #6c757d;
+  --light-bg: #f8f9fa;
+  --light-text: #212529;
+  --dark-bg: #1a1a1a;
+  --dark-text: #f8f9fa;
+  --dark-component-bg: #2c2c2c;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+  
+  /* Font sizes */
+  --font-size-small: 0.875rem;
+  --font-size-medium: 1rem;
+  --font-size-large: 1.25rem;
+}
+
+/* Main Dashboard Container */
+.dashboard {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--light-bg);
+  color: var(--light-text);
+  transition: var(--transition);
+  padding: 0; /* Changed from 1rem to 0 to eliminate white edges */
+  margin: 0;
+}
+
+.dashboard-inner {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 1rem; /* Move padding from .dashboard to .dashboard-inner */
+}
+
+.dashboard.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+/* Fix for Bootstrap container within dashboard */
+.dashboard .container,
+.dashboard.dark-mode .container {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  background-color: inherit;
+}
+
+/* Make sure all inner components inherit background color */
+.dashboard.dark-mode * {
+  background-color: inherit;
+}
+
+/* Fix specific background colors for components that need them */
+.dashboard.dark-mode .welcome-message,
+.dashboard.dark-mode .query-input-container,
+.dashboard.dark-mode .response-section,
+.dashboard.dark-mode .circle-icon,
+.dashboard.dark-mode .popup-container {
+  background-color: var(--dark-component-bg);
+}
+
+/* Main Content */
+.main-content {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Welcome Message */
+.welcome-message {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  margin-bottom: 1.5rem;
+}
+
+.dark-mode .welcome-message {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-message h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.dark-mode .welcome-message h2 {
+  color: #6a9cde;
+}
+
+/* Query Section */
+.query-section {
+  width: 100%;
+}
+
+.query-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: white;
+  transition: var(--transition);
+}
+
+.dark-mode .query-input-container {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.query-input {
+  flex-grow: 1;
+  padding: 1rem;
+  border: none;
+  resize: none;
+  min-height: 100px;
+  font-family: inherit;
+  outline: none;
+  background-color: transparent;
+  color: inherit;
+  border-right: 1px solid #ddd;
+}
+
+.dark-mode .query-input {
+  border-right: 1px solid #444;
+}
+
+.process-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1.2rem;
+}
+
+.process-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.process-btn:disabled {
+  background-color: var(--secondary-color);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Button Navigation */
+.button-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  transition: var(--transition);
+}
+
+.icon-btn:hover {
+  transform: translateY(-3px);
+}
+
+.circle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+  box-shadow: var(--box-shadow);
+  font-size: 1.5rem;
+  transition: var(--transition);
+}
+
+.dark-mode .circle-icon {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Response Section */
+.response-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+}
+
+.dark-mode .response-section {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.response-section h3 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.dark-mode .response-section h3 {
+  color: #6a9cde;
+}
+
+.response-content {
+  position: relative;
+}
+
+.tts-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.tts-btn:hover {
+  transform: scale(1.1);
+}
+
+.dark-mode .tts-btn {
+  color: #6a9cde;
+}
+
+/* Popup Styles */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup-container {
+  background-color: white;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: var(--transition);
+}
+
+.dark-mode .popup-container {
+  background-color: var(--dark-component-bg);
+}
+
+.popup-content {
+  padding: 1.5rem;
+}
+
+.popup-content h2 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  text-align: center;
+}
+
+.dark-mode .popup-content h2 {
+  color: #6a9cde;
+}
+
+/* Voice Input Popup */
+.voice-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.voice-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* Font Size Popup */
+.font-size-options {
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+}
+
+.font-option {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  background: none;
+  color: var(--light-text);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.dark-mode .font-option {
+  border-color: #444;
+  color: var(--dark-text);
+}
+
+.font-option.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Recent Highlights Popup */
+.highlights-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.highlight-item {
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  transition: var(--transition);
+}
+
+.dark-mode .highlight-item {
+  border-bottom-color: #444;
+}
+
+.highlight-query {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* Settings Popup */
+.settings-list {
+  margin: 1.5rem 0;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.dark-mode .setting-item {
+  border-bottom-color: #444;
+}
+
+.setting-item label {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.toggle-switch {
+  background-color: #f0f0f0;
+  color: var(--light-text);
+  border: 1px solid #ddd;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.dark-mode .toggle-switch {
+  background-color: #3a3a3a;
+  border-color: #444;
+  color: var(--dark-text);
+}
+
+.toggle-switch.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Popup Buttons */
+.popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.primary-btn, .secondary-btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.primary-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.primary-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.secondary-btn {
+  background-color: #f0f0f0;
+  color: var(--light-text);
+  border: 1px solid #ddd;
+}
+
+.dark-mode .secondary-btn {
+  background-color: transparent;
+  border-color: #444;
+  color: var(--dark-text);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Fix for dark mode buttons to ensure they don't inherit background color */
+.dark-mode .primary-btn {
+  background-color: var(--primary-color) !important;
+}
+
+.dark-mode .secondary-btn {
+  background-color: transparent !important;
+}
+
+.dark-mode .secondary-btn:hover {
+  background-color: transparent !important;
+}
+
+/* Footer */
+.footer {
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--secondary-color);
+  margin-top: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .button-nav {
+    gap: 1rem;
+  }
+  
+  .circle-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+  
+  .welcome-message h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .button-nav {
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .popup-container {
+    width: 95%;
+  }
+}

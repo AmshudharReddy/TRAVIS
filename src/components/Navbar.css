@@ -1,0 +1,363 @@
+/* Navbar.css */
+.navbar {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 0;
+    z-index: 1000;
+    font-family: 'Lexend', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.navbar.dark-mode {
+    background-color: #2c3e50;
+    color: #f8f9fa;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Logo and Branding */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    align-items: flex-start;
+}
+
+.logo-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: teal;
+    letter-spacing: 1px;
+    font-family: 'Bruno Ace SC', sans-serif;
+}
+
+.dark-mode .logo-text {
+    color: #4ecdc4;
+}
+
+.tagline {
+    font-size: 12px;
+    color: #666;
+    margin-top: -5px;
+}
+
+.dark-mode .tagline {
+    color: #adb5bd;
+}
+
+/* Navigation Menu Toggle */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: teal;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.dark-mode .menu-toggle {
+    color: #4ecdc4;
+}
+
+/* Navigation Container */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem;
+}
+
+.nav-item {
+    margin: 0;
+}
+
+.nav-link {
+    color: #555;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.dark-mode .nav-link {
+    color: #e9ecef;
+}
+
+.nav-link:hover {
+    color: teal;
+}
+
+.dark-mode .nav-link:hover {
+    color: #4ecdc4;
+}
+
+.nav-link.active {
+    color: teal;
+    font-weight: 600;
+}
+
+.dark-mode .nav-link.active {
+    color: #4ecdc4;
+}
+
+.nav-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: teal;
+}
+
+.dark-mode .nav-link.active::after {
+    background-color: #4ecdc4;
+}
+
+/* Authentication Section */
+.auth-section {
+    display: flex;
+    align-items: center;
+    margin-left: 2rem;
+    gap: 1rem;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: teal;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+.dark-mode .theme-toggle {
+    color: #f8f9fa;
+}
+
+.theme-toggle:hover {
+    background-color: rgba(0, 128, 128, 0.1);
+    transform: rotate(15deg);
+}
+
+.dark-mode .theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.dark-mode .profile-link {
+    color: #e9ecef;
+}
+
+.profile-link:hover {
+    color: teal;
+}
+
+.dark-mode .profile-link:hover {
+    color: #4ecdc4;
+}
+
+.user-icon {
+    color: teal;
+    transition: transform 0.3s ease;
+}
+
+.dark-mode .user-icon {
+    color: #4ecdc4;
+}
+
+.profile-link:hover .user-icon {
+    transform: scale(1.1);
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.login-button {
+    background-color: transparent;
+    color: teal;
+    border: 1px solid teal;
+    border-radius: 4px;
+    padding: 0.5rem 1.25rem;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .login-button {
+    color: #4ecdc4;
+    border: 1px solid #4ecdc4;
+}
+
+.login-button:hover {
+    background-color: rgba(0, 128, 128, 0.1);
+}
+
+.dark-mode .login-button:hover {
+    background-color: rgba(78, 205, 196, 0.1);
+}
+
+.signup-button {
+    background-color: teal;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.25rem;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .signup-button {
+    background-color: #4ecdc4;
+    color: #212529;
+}
+
+.signup-button:hover {
+    background-color: #006d6d;
+}
+
+.dark-mode .signup-button:hover {
+    background-color: #3dbeb3;
+}
+
+.logout-button {
+    background-color: #f1f1f1;
+    color: #555;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.25rem;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .logout-button {
+    background-color: #495057;
+    color: #e9ecef;
+}
+
+.logout-button:hover {
+    background-color: #e2e2e2;
+    color: #333;
+}
+
+.dark-mode .logout-button:hover {
+    background-color: #343a40;
+    color: #f8f9fa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+    
+    .nav-container {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+    
+    .dark-mode .nav-container {
+        background-color: #2c3e50;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .nav-container.active {
+        display: flex;
+    }
+    
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .nav-item {
+        margin: 0.5rem 0;
+    }
+    
+    .auth-section {
+        margin-left: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .theme-toggle {
+        margin-bottom: 1rem;
+    }
+    
+    .user-section, 
+    .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+    }
+    
+    .login-button, 
+    .signup-button, 
+    .logout-button {
+        width: 100%;
+        text-align: center;
+    }
+}

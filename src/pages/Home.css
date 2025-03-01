@@ -1,0 +1,59 @@
+.home-container {
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .home-container.dark-mode {
+    background-color: #121212;
+    color: #f5f5f5;
+  }
+  
+  /* Remove Bootstrap container margins/padding */
+  .home-container .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    background-color: inherit;
+  }
+  
+  /* Card styling for dark mode */
+  .dark-card {
+    background-color: #1e1e1e !important;
+    color: #f5f5f5 !important;
+    border-color: #333 !important;
+  }
+  
+  /* Header styling for dark mode */
+  .dark-header {
+    background-color: #222 !important;
+    color: #4ecca3 !important;
+  }
+  
+  /* Default header styling (light mode) */
+  .card-header {
+    background-color: whitesmoke;
+    color: teal;
+  }
+  
+  /* Button styling for dark mode */
+  .dark-button {
+    color: #4ecca3 !important;
+  }
+  
+  /* Transition effects for smooth theme switching */
+  .card, .card-header, .btn {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Fix for Bootstrap row/col padding */
+  .row, .col, .col-md-6, .col-lg-4 {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: inherit;
+  }
