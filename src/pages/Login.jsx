@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -9,17 +9,23 @@ const Login = (props) => {
     const [credentials, setCredentials] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     let navigate = useNavigate();
-
-    useEffect(() => {
-        const token = sessionStorage.getItem('token');
-        if (token) {
-            props.showAlert && props.showAlert("Already Logged-in! (Logout to switch account)", 'info');
-            navigate('/dashboard');
-        }
-        // Removed `props.showAlert` from dependencies to prevent infinite re-renders
-    }, [navigate]);
     
-
+    const { showAlert } = props; // Destructure props before useEffect
+    const memoizedShowAlert = useCallback(() => {
+        showAlert?.("Already Logged-in! (Logout to switch account)", "info");
+    }, [showAlert]); // Properly include showAlert in dependencies
+    
+    useEffect(() => {
+        const token = sessionStorage.getItem("token");
+        if (token) {
+            setTimeout(() => {
+                memoizedShowAlert();
+            }, 100); // Small delay to prevent re-render loop
+            navigate("/dashboard");
+        }
+    }, [navigate, memoizedShowAlert]); // Use the memoized function in dependencies
+    
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -48,15 +54,23 @@ const Login = (props) => {
 
     return (
         <div style={styles.container}>
-            <div className="container d-flex justify-content-center align-items-center" style={styles.contentContainer}>
+            {/* Back Button */}
+            <Link to="/" style={styles.backButton}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                <span>Back</span>
+            </Link>
+            
+            <div className="d-flex justify-content-center align-items-center" style={styles.contentContainer}>
                 <div style={styles.cardWrapper}>
-                    <Card className="shadow-lg" style={styles.card}>
+                    <Card style={styles.card}>
                         <div style={styles.titleContainer}>
                             <h1 style={styles.title}>Mr.Travis</h1>
                         </div>
                         <div style={styles.formContainer}>
                             <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
+                                <div className="mb-3">
                                     <div className="input-group">
                                         <input
                                             type="email"
@@ -75,7 +89,7 @@ const Login = (props) => {
                                         We'll never share your email with anyone else.
                                     </div>
                                 </div>
-                                <div className="mb-4">
+                                <div className="mb-3">
                                     <div className="input-group" style={styles.passwordInputGroup}>
                                         <input
                                             type={showPassword ? "text" : "password"}
@@ -107,7 +121,7 @@ const Login = (props) => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="mt-4">
+                                <div className="mt-3">
                                     <button
                                         type="submit"
                                         className="btn"
@@ -134,6 +148,10 @@ const Login = (props) => {
                             Don't have an account?{' '}
                             <Link to="/signup" style={styles.link}>Sign up</Link>
                         </p>
+                        <p style={styles.accountLink}>
+                            Go back to {' '}
+                            <Link to="/" style={styles.link}>Home</Link>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -148,7 +166,8 @@ const styles = {
         alignItems: 'center',
         minHeight: '100vh',
         fontFamily: '"Kumbh Sans", sans-serif',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%)'
+        background: 'none', // Removed background gradient for better dark mode compatibility
+        position: 'relative'
     },
     contentContainer: {
         minHeight: '80vh',
@@ -156,42 +175,43 @@ const styles = {
     },
     cardWrapper: {
         width: '100%',
-        maxWidth: '420px',
+        maxWidth: '400px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1rem'
+        gap: '0.5rem'
     },
     card: {
-        borderRadius: '15px',
+        borderRadius: '12px',
         overflow: 'hidden',
         border: 'none',
-        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
+        background: 'inherit' // Use inherit to respect the theme
     },
     titleContainer: {
         background: 'linear-gradient(135deg, #009688 0%, #4DB6AC 100%)',
-        padding: '1.5rem 0',
+        padding: '1.25rem 0',
         textAlign: 'center',
-        borderBottom: '4px solid #80CBC4'
+        borderBottom: '3px solid #80CBC4'
     },
     title: {
         color: 'white',
-        fontSize: '2.2rem',
+        fontSize: '2rem',
         fontFamily: '"Bruno Ace SC", cursive',
         margin: 0,
         fontWeight: 'bold',
-        textShadow: '1px 1px 3px rgba(0, 0, 0, 0.2)'
+        textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)'
     },
     formContainer: {
-        padding: '2rem',
+        padding: '1.5rem',
         backgroundColor: 'transparent'
     },
     inputField: {
-        height: '50px',
-        borderRadius: '25px',
-        padding: '0.75rem 1.25rem',
+        height: '45px',
+        borderRadius: '22px',
+        padding: '0.5rem 1rem',
         fontSize: '1rem',
         border: '1px solid #ddd',
-        boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.05)',
+        boxShadow: 'none',
         transition: 'all 0.2s ease',
         backgroundColor: 'transparent'
     },
@@ -200,7 +220,7 @@ const styles = {
     },
     passwordToggle: {
         position: 'absolute',
-        right: '15px',
+        right: '12px',
         top: '50%',
         transform: 'translateY(-50%)',
         cursor: 'pointer',
@@ -208,48 +228,67 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '0.5rem',
+        padding: '0.25rem',
         color: '#555'
     },
     helperText: {
-        fontSize: '0.85rem',
+        fontSize: '0.8rem',
         color: '#6c757d',
-        marginTop: '0.5rem',
+        marginTop: '0.25rem',
         paddingLeft: '0.5rem'
     },
     button: {
         width: '100%',
-        height: '50px',
-        borderRadius: '25px',
+        height: '45px',
+        borderRadius: '22px',
         fontWeight: 'bold',
-        fontSize: '1.1rem',
+        fontSize: '1rem',
         color: 'white',
         border: 'none',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 3px 5px rgba(0, 0, 0, 0.1)',
         transition: 'all 0.3s ease'
     },
     messageContainer: {
-        padding: '0 2rem 1.5rem',
+        padding: '0 1.5rem 1rem',
         textAlign: 'center'
     },
     errorMessage: {
         color: '#e53935',
-        fontSize: '1rem',
+        fontSize: '0.9rem',
         margin: 0
     },
     accountLinkContainer: {
         textAlign: 'center',
-        marginTop: '1rem'
+        marginTop: '0.5rem'
     },
     accountLink: {
-        fontSize: '1rem',
-        color: '#555'
+        fontSize: '0.9rem',
+        color: 'inherit', // Use inherit to respect the theme
+        marginBottom: '0.25rem'
     },
     link: {
         color: '#009688',
         fontWeight: 'bold',
         textDecoration: 'none',
         transition: 'color 0.2s ease'
+    },
+    backButton: {
+        position: 'absolute',
+        top: '15px',
+        left: '15px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '5px',
+        padding: '6px 10px',
+        backgroundColor: '#009688',
+        color: 'white',
+        borderRadius: '20px',
+        textDecoration: 'none',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: '500',
+        fontSize: '0.9rem'
     }
 };
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Dashboard.css";
-import { FaPaperPlane } from "react-icons/fa"; // Import paper plane icon for submit button
+import { FaPaperPlane, FaTimes, FaMicrophone, FaLaptop, FaMobile, FaTabletAlt } from "react-icons/fa";
 
 const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) => {
   const [query, setQuery] = useState("");
@@ -8,13 +8,37 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   const [activePopup, setActivePopup] = useState(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [autoReadEnabled, setAutoReadEnabled] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const responseRef = useRef(null);
 
   const handleQuerySubmit = () => {
     if (query.trim() === "") return;
-    // Placeholder for AI processing logic
-    setResponse(`Response for: "${query}"`);
-    setQuery("");
-    setActivePopup(null);
+    
+    // Start transition animation
+    setIsTransitioning(true);
+    
+    // Simulate AI processing delay
+    setTimeout(() => {
+      setResponse(`Response for: "${query}"`);
+      setQuery("");
+      setActivePopup(null);
+      setIsTransitioning(false);
+      
+      // Scroll to response after it's rendered
+      setTimeout(() => {
+        if (responseRef.current) {
+          responseRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }, 300);
+  };
+
+  const handleCloseResponse = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setResponse(null);
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const togglePopup = (popupName) => {
@@ -46,25 +70,125 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   ];
 
   return (
-    <div className={`dashboard ${darkMode ? "dark-mode" : ""}`}>
+    <div className={`dashboard ${darkMode ? "dark-mode" : ""} ${response ? "response-active" : ""}`}>
       <div className="dashboard-inner">
         {/* Main Content */}
         <main className="main-content">
-          {/* Welcome Message - Now positioned at the top */}
+          {/* Welcome Message - Enhanced with better styling */}
+          {!response && 
           <div className="welcome-message">
             <h2>👋 Welcome to TRAVIS AI Assistant!</h2>
-            <p>Your intelligent companion for all your questions and tasks. Type a query below or use the tools to interact.</p>
-          </div>
+            <p>Your intelligent companion for all your questions and tasks. Simply type a query below or use voice commands to get started. Our advanced AI is ready to assist you with information, creative tasks, and problem-solving.</p>
+          </div>}
 
-          {/* Query Input Section - Moved below welcome message */}
-          <div className="query-section">
+          {/* Response Display (shown when there's a response) */}
+          {response && (
+            <div className="response-mode" ref={responseRef}>
+              <div className="response-header">
+                <h3>AI Response</h3>
+                <button onClick={handleCloseResponse} className="close-response-btn" title="Close Response">
+                  <FaTimes />
+                </button>
+              </div>
+              <div className="response-content" style={{ fontSize: `var(--font-size-${fontSize})` }}>
+                <p>{response}</p>
+                <button className="tts-btn" title="Listen to response">
+                  <FaMicrophone />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* "What's your query?" text - only shown when no response */}
+          {!response && (
+            <div className="query-label">
+              <p style={{fontSize: "20px", textAlign:"center"}}>What's your query?</p>
+            </div>
+          )}
+
+          {/* Query Input Section - Only shown here in normal mode */}
+          {!response && (
+            <div className="query-section">
+              <div className="query-input-container">
+                <textarea
+                  className="query-input"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Ask me anything..."
+                  style={{ fontSize: `var(--font-size-${fontSize})` }}
+                />
+                <button 
+                  onClick={handleQuerySubmit} 
+                  className="process-btn"
+                  title="Process Query"
+                  disabled={query.trim() === ""}
+                >
+                  <FaPaperPlane />
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {/* Button Navigation - only shown when no response */}
+          {!response && (
+            <div className="button-nav">
+              <button 
+                className="icon-btn" 
+                onClick={() => togglePopup('speak')}
+                title="Speak"
+              >
+                <div className="circle-icon">🎤</div>
+                <span>Speak</span>
+              </button>
+              
+              <button 
+                className="icon-btn" 
+                onClick={() => togglePopup('recent')}
+                title="Recent Highlights"
+              >
+                <div className="circle-icon">📊</div>
+                <span>Recent</span>
+              </button>
+              
+              <button 
+                className="icon-btn" 
+                onClick={() => togglePopup('fontSize')}
+                title="Font Size"
+              >
+                <div className="circle-icon">Aa</div>
+                <span>Font Size</span>
+              </button>
+              
+              <button 
+                className="icon-btn" 
+                onClick={() => togglePopup('settings')}
+                title="Settings"
+              >
+                <div className="circle-icon">⚙️</div>
+                <span>Settings</span>
+              </button>
+            </div>
+          )}
+        </main>
+
+        {/* Footer - only shown when no response */}
+        {!response && (
+          <footer className="footer">
+            <p>© 2025 TRAVIS AI Assistant | v2.0.3</p>
+          </footer>
+        )}
+
+        {/* Fixed Query Input in Response Mode */}
+        {response && (
+          <div className={`response-mode-query ${isTransitioning ? 'entering' : ''}`}>
             <div className="query-input-container">
               <textarea
                 className="query-input"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder="Type your query here..."
+                placeholder="Ask a follow-up question..."
                 style={{ fontSize: `var(--font-size-${fontSize})` }}
               />
               <button 
@@ -77,57 +201,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
               </button>
             </div>
           </div>
-          
-          {/* Button Navigation */}
-          <div className="button-nav">
-            <button 
-              className="icon-btn" 
-              onClick={() => togglePopup('speak')}
-              title="Speak"
-            >
-              <div className="circle-icon">🎤</div>
-              <span>Speak</span>
-            </button>
-            
-            <button 
-              className="icon-btn" 
-              onClick={() => togglePopup('recent')}
-              title="Recent Highlights"
-            >
-              <div className="circle-icon">📊</div>
-              <span>Recent</span>
-            </button>
-            
-            <button 
-              className="icon-btn" 
-              onClick={() => togglePopup('fontSize')}
-              title="Font Size"
-            >
-              <div className="circle-icon">Aa</div>
-              <span>Font Size</span>
-            </button>
-            
-            <button 
-              className="icon-btn" 
-              onClick={() => togglePopup('settings')}
-              title="Settings"
-            >
-              <div className="circle-icon">⚙️</div>
-              <span>Settings</span>
-            </button>
-          </div>
-
-          {/* Response Display */}
-          {response && (
-            <section className="response-section">
-              <h3>AI Response:</h3>
-              <div className="response-content" style={{ fontSize: `var(--font-size-${fontSize})` }}>
-                <p>{response}</p>
-                <button className="tts-btn">🔊 Listen</button>
-              </div>
-            </section>
-          )}
-        </main>
+        )}
 
         {/* Popups */}
         {activePopup && (
@@ -246,11 +320,6 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
             </div>
           </div>
         )}
-
-        {/* Footer */}
-        <footer className="footer">
-          <p>© 2025 TRAVIS AI Assistant | v2.0.3</p>
-        </footer>
       </div>
     </div>
   );
