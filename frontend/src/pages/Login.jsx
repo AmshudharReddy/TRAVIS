@@ -1,66 +1,53 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-const Signup = (props) => {
-    const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" });
+const Login = (props) => {
+    const location = useLocation();
+    const message = location.state?.message;
+
+    const [credentials, setCredentials] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
-    const [passwordMatch, setPasswordMatch] = useState(true);
+    const [checkedLogin, setCheckedLogin] = useState(false); // Track first check
     let navigate = useNavigate();
 
     const { showAlert } = props; 
+
     const memoizedShowAlert = useCallback(() => {
-            showAlert?.("This user Exists! (Please try with other)", "info");
-        }, [showAlert]); // Properly include showAlert in dependencies
-        
-        useEffect(() => {
-            const token = sessionStorage.getItem("token");
-            if (token) {
-                setTimeout(() => {
-                    memoizedShowAlert();
-                }, 100); // Small delay to prevent re-render loop
-                navigate("/dashboard");
-            }
-        }, [navigate, memoizedShowAlert]); // Use the memoized function in dependencies
+        showAlert?.("Already Logged-in! (Logout to switch account)", "info");
+    }, [showAlert]);
 
+    // ✅ Check login only when the component mounts
     useEffect(() => {
-        if (credentials.password || credentials.cpassword) {
-            setPasswordMatch(credentials.password === credentials.cpassword);
-        }
-    }, [credentials.password, credentials.cpassword]);
+        const token = sessionStorage.getItem("token");
 
-
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            const form = e.target.form;
-            const index = Array.from(form).indexOf(e.target);
-            if (form[index + 1]) {
-                form[index + 1].focus();
-            } else {
-                form.requestSubmit();
-            }
+        if (token && !checkedLogin) {
+            setCheckedLogin(true);
+            setTimeout(() => {
+                memoizedShowAlert();
+            }, 100);
+            navigate("/dashboard");
         }
-    };
+    }, []); // ✅ Empty dependency array ensures this runs only once
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { name, email, password } = credentials;
-        const response = await fetch("http://localhost:5000/api/auth/signup", {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, email, password }),
+            body: JSON.stringify({ email: credentials.email, password: credentials.password }),
         });
         const json = await response.json();
         console.log(json);
+
         if (json.success) {
             sessionStorage.setItem('token', json.authToken);
+            showAlert("Logged-in Successfully", "success"); // ✅ Correct success message
             navigate("/dashboard");
-            props.showAlert("Account created Successfully", "success");
         } else {
-            props.showAlert("Invalid details", "danger");
+            showAlert("Invalid credentials", "danger");
         }
     };
 
@@ -68,23 +55,18 @@ const Signup = (props) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
-    const isFormValid = credentials.name &&
-        credentials.email &&
-        credentials.password &&
-        credentials.cpassword &&
-        (credentials.password === credentials.cpassword) &&
-        credentials.password.length >= 5;
+    const isFormValid = credentials.email && credentials.password;
 
     return (
         <div style={styles.container}>
             {/* Back Button */}
             <Link to="/" style={styles.backButton}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
                 <span>Back</span>
             </Link>
-
+            
             <div className="d-flex justify-content-center align-items-center" style={styles.contentContainer}>
                 <div style={styles.cardWrapper}>
                     <Card style={styles.card}>
@@ -94,32 +76,20 @@ const Signup = (props) => {
                         <div style={styles.formContainer}>
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        style={styles.inputField}
-                                        value={credentials.name}
-                                        onChange={onChange}
-                                        onKeyDown={handleKeyDown}
-                                        id="name"
-                                        name="name"
-                                        placeholder="Full Name"
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <input
-                                        type="email"
-                                        className="form-control"
-                                        style={styles.inputField}
-                                        value={credentials.email}
-                                        onChange={onChange}
-                                        onKeyDown={handleKeyDown}
-                                        id="email"
-                                        name="email"
-                                        placeholder="Email"
-                                        required
-                                    />
+                                    <div className="input-group">
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            style={styles.inputField}
+                                            value={credentials.email}
+                                            onChange={onChange}
+                                            id="email"
+                                            name="email"
+                                            aria-describedby="emailHelp"
+                                            placeholder="Email"
+                                            required
+                                        />
+                                    </div>
                                     <div style={styles.helperText} id="emailHelp" className="form-text">
                                         We'll never share your email with anyone else.
                                     </div>
@@ -132,12 +102,10 @@ const Signup = (props) => {
                                             style={styles.inputField}
                                             value={credentials.password}
                                             onChange={onChange}
-                                            onKeyDown={handleKeyDown}
                                             name="password"
                                             id="password"
-                                            placeholder="Password (min 5 characters)"
+                                            placeholder="Password"
                                             required
-                                            minLength="5"
                                         />
                                         <span
                                             style={styles.passwordToggle}
@@ -158,28 +126,6 @@ const Signup = (props) => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="mb-3">
-                                    <input
-                                        type="password"
-                                        className={`form-control ${!passwordMatch && credentials.cpassword ? 'is-invalid' : ''}`}
-                                        style={{
-                                            ...styles.inputField,
-                                            borderColor: !passwordMatch && credentials.cpassword ? '#dc3545' : '#ddd'
-                                        }}
-                                        value={credentials.cpassword}
-                                        onChange={onChange}
-                                        onKeyDown={handleKeyDown}
-                                        name="cpassword"
-                                        id="cpassword"
-                                        placeholder="Confirm Password"
-                                        required
-                                    />
-                                    {!passwordMatch && credentials.cpassword && (
-                                        <div className="invalid-feedback" style={styles.errorFeedback}>
-                                            Passwords do not match
-                                        </div>
-                                    )}
-                                </div>
                                 <div className="mt-3">
                                     <button
                                         type="submit"
@@ -191,19 +137,24 @@ const Signup = (props) => {
                                         }}
                                         disabled={!isFormValid}
                                     >
-                                        Create Account
+                                        Login
                                     </button>
                                 </div>
                             </form>
                         </div>
+                        {message && (
+                            <div style={styles.messageContainer}>
+                                <p style={styles.errorMessage}>{message}</p>
+                            </div>
+                        )}
                     </Card>
                     <div style={styles.accountLinkContainer}>
                         <p style={styles.accountLink}>
-                            Already have an account?{' '}
-                            <Link to="/login" style={styles.link}>Log in</Link>
+                            Don't have an account?{' '}
+                            <Link to="/signup" style={styles.link}>Sign up</Link>
                         </p>
                         <p style={styles.accountLink}>
-                            Go back to{' '}
+                            Go back to {' '}
                             <Link to="/" style={styles.link}>Home</Link>
                         </p>
                     </div>
@@ -291,10 +242,6 @@ const styles = {
         marginTop: '0.25rem',
         paddingLeft: '0.5rem'
     },
-    errorFeedback: {
-        fontSize: '0.8rem',
-        paddingLeft: '0.5rem'
-    },
     button: {
         width: '100%',
         height: '45px',
@@ -305,6 +252,15 @@ const styles = {
         border: 'none',
         boxShadow: '0 3px 5px rgba(0, 0, 0, 0.1)',
         transition: 'all 0.3s ease'
+    },
+    messageContainer: {
+        padding: '0 1.5rem 1rem',
+        textAlign: 'center'
+    },
+    errorMessage: {
+        color: '#e53935',
+        fontSize: '0.9rem',
+        margin: 0
     },
     accountLinkContainer: {
         textAlign: 'center',
@@ -341,4 +297,4 @@ const styles = {
     }
 };
 
-export default Signup;
+export default Login;
