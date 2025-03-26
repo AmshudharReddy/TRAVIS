@@ -1,14 +1,16 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
 import { useState, useEffect } from 'react';
+import Home from './pages/Home/Home';
+import Dashboard from './pages/Dashboard/Dashboard';
 import Alert from './components/Alert';
 import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import Login from './pages/Login/Login';
+import Signup from './pages/Signup/Signup';
 import ProtectedRoute from './components/ProtectedRoute';
-import About from './pages/About';
+import About from './pages/About/About';
+import QueryHistory from './pages/QueryHistory/QueryHistory';
+import UserProfile from './pages/UserProflie/UserProfile';
 
 function App() {
   const location = useLocation();
@@ -47,13 +49,17 @@ function App() {
       <div className='container'>
         <Routes>
           {/* Home */}
-          <Route exact path="/" element={<Home showAlert={showAlert} darkMode={darkMode} />} />
+          <Route exact path="/" element={
+            <Home showAlert={showAlert} darkMode={darkMode} />} />
           {/* About */}
-          <Route exact path="/about" element={<About showAlert={showAlert} darkMode={darkMode} />} />
+          <Route exact path="/about" element={
+            <About showAlert={showAlert} darkMode={darkMode} />} />
           {/* Login */}
-          <Route exact path="/login" element={<Login showAlert={showAlert} darkMode={darkMode} />} />
+          <Route exact path="/login" element={
+            <Login showAlert={showAlert} darkMode={darkMode} />} />
           {/* Signup */}
-          <Route exact path="/signup" element={<Signup showAlert={showAlert} darkMode={darkMode} />} />
+          <Route exact path="/signup" element={
+            <Signup showAlert={showAlert} darkMode={darkMode} />} />
           {/* Dashboard */}
           <Route exact path="/dashboard" element={
             <ProtectedRoute>
@@ -66,18 +72,30 @@ function App() {
               />
             </ProtectedRoute>
           } />
+          {/* QueryHistory */}
+          <Route exact path="/history" element={
+            <ProtectedRoute>
+              <QueryHistory showAlert={showAlert} darkMode={darkMode} />
+            </ProtectedRoute>
+          } />
+          {/* UserProfile */}
+          <Route exact path="/profile" element={
+            <ProtectedRoute>
+              <UserProfile showAlert={showAlert} darkMode={darkMode} />
+            </ProtectedRoute>
+          } />
         </Routes>
       </div>
     </div>
   );
 }
 
-function AppWithRouter() {
+
+
+export default function AppWithRouter() {
   return (
     <Router>
       <App />
     </Router>
   );
-}
-
-export default AppWithRouter;
+};

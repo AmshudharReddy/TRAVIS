@@ -14,18 +14,18 @@ const Signup = (props) => {
         showAlert?.("This user Exists! (Please try with another)", "info");
     }, [showAlert]);
 
-    // ✅ Check login status only once when the component mounts
+    // Check login status only once when the component mounts
     useEffect(() => {
-        const token = sessionStorage.getItem("token");
+        const token = sessionStorage.getItem("auth-token");
         if (token) {
             setTimeout(() => {
                 memoizedShowAlert();
             }, 100);
             navigate("/dashboard");
         }
-    }, []); // ✅ Empty dependency array ensures it runs only once
+    }, []); // Empty dependency array ensures it runs only once
 
-    // ✅ Password confirmation logic
+    //  Password confirmation logic
     useEffect(() => {
         setPasswordMatch(credentials.password === credentials.cpassword);
     }, [credentials.password, credentials.cpassword]);
@@ -57,7 +57,7 @@ const Signup = (props) => {
         console.log(json);
 
         if (json.success) {
-            sessionStorage.setItem('token', json.authToken);
+            sessionStorage.setItem('auth-token', json.authToken);
             showAlert("Account created Successfully", "success");
             navigate("/dashboard");
         } else {

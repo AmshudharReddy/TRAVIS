@@ -7,9 +7,11 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.8.1",
     "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.3",
     "cors": "^2.8.5",
+    "express": "^4.21.2",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.11.0",
@@ -25,7 +27,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "both": "concurrently \"npm run start-f\" \"npm run start-b\"",
+    "start-f": "cd frontend && npm start",
+    "start-b": "cd backend && nodemon index.js"
   },
   "eslintConfig": {
     "extends": [

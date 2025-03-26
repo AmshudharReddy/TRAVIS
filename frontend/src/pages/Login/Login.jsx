@@ -17,9 +17,9 @@ const Login = (props) => {
         showAlert?.("Already Logged-in! (Logout to switch account)", "info");
     }, [showAlert]);
 
-    // ✅ Check login only when the component mounts
+    // Check login only when the component mounts
     useEffect(() => {
-        const token = sessionStorage.getItem("token");
+        const token = sessionStorage.getItem("auth-token");
 
         if (token && !checkedLogin) {
             setCheckedLogin(true);
@@ -28,7 +28,7 @@ const Login = (props) => {
             }, 100);
             navigate("/dashboard");
         }
-    }, []); // ✅ Empty dependency array ensures this runs only once
+    }, []); // Empty dependency array ensures this runs only once
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,8 +43,8 @@ const Login = (props) => {
         console.log(json);
 
         if (json.success) {
-            sessionStorage.setItem('token', json.authToken);
-            showAlert("Logged-in Successfully", "success"); // ✅ Correct success message
+            sessionStorage.setItem('auth-token', json.authToken);
+            showAlert("Logged-in Successfully", "success");
             navigate("/dashboard");
         } else {
             showAlert("Invalid credentials", "danger");

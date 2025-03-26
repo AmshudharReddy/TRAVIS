@@ -350,6 +350,7 @@
 
 .icon-btn:hover {
   transform: translateY(-3px);
+  /* color:salmon; */
 }
 
 .circle-icon {
@@ -582,6 +583,30 @@
   transform: translateY(-2px);
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
+
+
+
+
+.view-all-link {
+  text-decoration: underline;
+  color: #007bff;
+  margin-right: 15px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.view-all-link:hover {
+  color: #0056b3;
+}
+
+.dark-mode .view-all-link {
+  color: #4da6ff;
+}
+
+.dark-mode .view-all-link:hover {
+  color: #80c1ff;
+}
+
 
 /* Footer */
 .footer {

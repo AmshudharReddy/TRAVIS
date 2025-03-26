@@ -1,15 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaUserCircle, FaBars, FaTimes, FaSun, FaMoon } from "react-icons/fa";
 import './Navbar.css';
+import axios from 'axios';
 
 const Navbar = ({ darkMode, setDarkMode }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [userName, setUserName] = useState("");
+
+
+    useEffect(() => {
+        const fetchUserDetails = async() => {
+            try{
+                const authToken = sessionStorage.getItem("auth-token");
+                if(authToken){
+                    const response = await axios.post('http://localhost:5000/api/auth/getuser', {}, {
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    });
+                    // console.log(response.data);
+                    setUserName(response.data.name);
+                }
+            } catch(error){
+                console.error("Error fetching the User Details: ", error);
+            }
+        };
+
+        fetchUserDetails();
+    }, []);
+
 
     const handleLogout = () => {
-        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('auth-token');
         navigate('/login');
     };
 
@@ -84,11 +109,11 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                             {darkMode ? <FaSun size={24} /> : <FaMoon size={24} />}
                         </button>
                         
-                        {sessionStorage.getItem('token') ? (
+                        {sessionStorage.getItem('auth-token') ? (
                             <div className="user-section">
                                 <Link to="/profile" className="profile-link">
                                     <FaUserCircle size={38} className="user-icon" />
-                                    <span className="user-name">Agent Athreya</span>
+                                    <span className="user-name">{userName ? `${userName}` : "Agent Athreya"}</span>
                                 </Link>
                                 <button
                                     onClick={handleLogout}

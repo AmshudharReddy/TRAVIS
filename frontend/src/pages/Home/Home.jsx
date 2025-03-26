@@ -7,7 +7,7 @@ const Home = ({ darkMode }) => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    const authToken = sessionStorage.getItem('token');
+    const authToken = sessionStorage.getItem('auth-token');
     if(!authToken){
       navigate('/login');
     } else{
@@ -43,7 +43,8 @@ const Home = ({ darkMode }) => {
                 color: darkMode ? '#4ecca3' : 'teal'
               }}
             >
-              TRAVIS, Agent Athreya
+              TRAVIS:
+              <h4>Transfomer-based Assistant for Visually Impaired Service agents</h4>
             </Card.Header>
             <Button
               variant={darkMode ? "outline-info" : "primary"}

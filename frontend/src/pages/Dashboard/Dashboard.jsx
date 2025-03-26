@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from 'react-router-dom';
 import "./Dashboard.css";
 import { FaPaperPlane, FaTimes, FaMicrophone, FaLaptop, FaMobile, FaTabletAlt } from "react-icons/fa";
 
@@ -11,26 +12,51 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const responseRef = useRef(null);
 
-  const handleQuerySubmit = () => {
-    if (query.trim() === "") return;
-    
-    // Start transition animation
-    setIsTransitioning(true);
-    
-    // Simulate AI processing delay
-    setTimeout(() => {
-      setResponse(`Response for: "${query}"`);
-      setQuery("");
-      setActivePopup(null);
-      setIsTransitioning(false);
-      
-      // Scroll to response after it's rendered
-      setTimeout(() => {
-        if (responseRef.current) {
-          responseRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    }, 300);
+
+  const speak = (text) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US"; // Change if needed
+      utterance.rate = 1; // Adjust speaking speed
+      window.speechSynthesis.speak(utterance);
+      console.log("Voice output");
+    } else {
+      alert("Text-to-Speech not supported in this browser.");
+    }
+  };
+
+  const handleQuerySubmit = async (query) => {
+    const authToken = sessionStorage.getItem("auth-token");
+
+    if (!authToken) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": authToken, // Send the token in the request header
+        },
+        body: JSON.stringify({ query }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Query processed:", data);
+        setResponse(data.response || "No response received");
+        // speak(data.response);
+      } else {
+        console.error("Error:", data.error);
+        setResponse(data.error || "An error occurred while processing the query");
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+      // Set an error response if the request failed
+      setResponse("Network error. Please try again.");
+    }
   };
 
   const handleCloseResponse = () => {
@@ -49,7 +75,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
     }
   };
 
-  // Save font size changes to localStorage
+
   useEffect(() => {
     localStorage.setItem('fontSize', fontSize);
   }, [fontSize]);
@@ -58,7 +84,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleQuerySubmit();
+      handleQuerySubmit(query);
     }
   };
 
@@ -74,12 +100,12 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
       <div className="dashboard-inner">
         {/* Main Content */}
         <main className="main-content">
-          {/* Welcome Message - Enhanced with better styling */}
-          {!response && 
-          <div className="welcome-message">
-            <h2>👋 Welcome to TRAVIS AI Assistant!</h2>
-            <p>Your intelligent companion for all your questions and tasks. Simply type a query below or use voice commands to get started. Our advanced AI is ready to assist you with information, creative tasks, and problem-solving.</p>
-          </div>}
+          {/* Welcome Message */}
+          {!response &&
+            <div className="welcome-message">
+              <h2>👋 Welcome to TRAVIS AI Assistant!</h2>
+              <p>Your intelligent companion for all your questions and tasks. Simply type a query below or use voice commands to get started. Our advanced AI is ready to assist you with information, creative tasks, and problem-solving.</p>
+            </div>}
 
           {/* Response Display (shown when there's a response) */}
           {response && (
@@ -92,7 +118,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
               </div>
               <div className="response-content" style={{ fontSize: `var(--font-size-${fontSize})` }}>
                 <p>{response}</p>
-                <button className="tts-btn" title="Listen to response">
+                <button onClick={() => speak(response)} className="tts-btn" title="Listen to response">
                   <FaMicrophone />
                 </button>
               </div>
@@ -102,7 +128,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
           {/* "What's your query?" text - only shown when no response */}
           {!response && (
             <div className="query-label">
-              <p style={{fontSize: "20px", textAlign:"center"}}>What's your query?</p>
+              <p style={{ fontSize: "20px", textAlign: "center" }}>What's your query?</p>
             </div>
           )}
 
@@ -118,8 +144,8 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                   placeholder="Ask me anything..."
                   style={{ fontSize: `var(--font-size-${fontSize})` }}
                 />
-                <button 
-                  onClick={handleQuerySubmit} 
+                <button
+                  onClick={() => handleQuerySubmit(query)}
                   className="process-btn"
                   title="Process Query"
                   disabled={query.trim() === ""}
@@ -129,39 +155,39 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
               </div>
             </div>
           )}
-          
+
           {/* Button Navigation - only shown when no response */}
           {!response && (
             <div className="button-nav">
-              <button 
-                className="icon-btn" 
+              <button
+                className="icon-btn"
                 onClick={() => togglePopup('speak')}
                 title="Speak"
               >
                 <div className="circle-icon">🎤</div>
                 <span>Speak</span>
               </button>
-              
-              <button 
-                className="icon-btn" 
+
+              <button
+                className="icon-btn"
                 onClick={() => togglePopup('recent')}
                 title="Recent Highlights"
               >
                 <div className="circle-icon">📊</div>
                 <span>Recent</span>
               </button>
-              
-              <button 
-                className="icon-btn" 
+
+              <button
+                className="icon-btn"
                 onClick={() => togglePopup('fontSize')}
                 title="Font Size"
               >
                 <div className="circle-icon">Aa</div>
                 <span>Font Size</span>
               </button>
-              
-              <button 
-                className="icon-btn" 
+
+              <button
+                className="icon-btn"
                 onClick={() => togglePopup('settings')}
                 title="Settings"
               >
@@ -179,7 +205,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
           </footer>
         )}
 
-        {/* Fixed Query Input in Response Mode */}
+        {/* Query Input in Response Mode */}
         {response && (
           <div className={`response-mode-query ${isTransitioning ? 'entering' : ''}`}>
             <div className="query-input-container">
@@ -191,8 +217,8 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                 placeholder="Ask a follow-up question..."
                 style={{ fontSize: `var(--font-size-${fontSize})` }}
               />
-              <button 
-                onClick={handleQuerySubmit} 
+              <button
+                onClick={handleQuerySubmit}
                 className="process-btn"
                 title="Process Query"
                 disabled={query.trim() === ""}
@@ -235,7 +261,19 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                     ))}
                   </ul>
                   <div className="popup-actions">
-                    <button onClick={() => setActivePopup(null)} className="secondary-btn">Close</button>
+                    <Link
+                      to="/history"
+                      className="view-all-link"
+                      onClick={() => setActivePopup(null)}
+                    >
+                      View Full Query History
+                    </Link>
+                    <button
+                      onClick={() => setActivePopup(null)}
+                      className="secondary-btn"
+                    >
+                      Close
+                    </button>
                   </div>
                 </div>
               )}
@@ -245,19 +283,19 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                 <div className="popup-content">
                   <h2>Font Size</h2>
                   <div className="font-size-options">
-                    <button 
+                    <button
                       className={`font-option ${fontSize === 'small' ? 'active' : ''}`}
                       onClick={() => setFontSize('small')}
                     >
                       Small
                     </button>
-                    <button 
+                    <button
                       className={`font-option ${fontSize === 'medium' ? 'active' : ''}`}
                       onClick={() => setFontSize('medium')}
                     >
                       Medium
                     </button>
-                    <button 
+                    <button
                       className={`font-option ${fontSize === 'large' ? 'active' : ''}`}
                       onClick={() => setFontSize('large')}
                     >
@@ -278,7 +316,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                     <div className="setting-item">
                       <label>
                         <span>Dark Mode</span>
-                        <button 
+                        <button
                           className={`toggle-switch ${darkMode ? 'active' : ''}`}
                           onClick={() => {
                             setDarkMode(!darkMode);
@@ -292,7 +330,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                     <div className="setting-item">
                       <label>
                         <span>Notifications</span>
-                        <button 
+                        <button
                           className={`toggle-switch ${notificationsEnabled ? 'active' : ''}`}
                           onClick={() => setNotificationsEnabled(!notificationsEnabled)}
                         >
@@ -303,7 +341,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                     <div className="setting-item">
                       <label>
                         <span>Auto-read Responses</span>
-                        <button 
+                        <button
                           className={`toggle-switch ${autoReadEnabled ? 'active' : ''}`}
                           onClick={() => setAutoReadEnabled(!autoReadEnabled)}
                         >
