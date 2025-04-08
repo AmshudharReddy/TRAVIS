@@ -1,194 +1,332 @@
-
+/* Base container styling */
 .profile-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     min-height: 80vh;
     font-family: "Kumbh Sans", sans-serif;
-    background: none;
     position: relative;
+    padding: 1.5rem 1rem;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.profile-content-container {
-    min-height: 80vh;
-    width: 100%;
+/* Using CSS variables for consistent theming */
+:root {
+    --primary-color: #009688;
+    --primary-hover: #00796B;
+    --primary-light: #4DB6AC;
+    --primary-lightest: #80CBC4;
+    --light-bg: #f8f9fa;
+    --light-card-bg: #ffffff;
+    --light-text: #424242;
+    --light-border: #e0e0e0;
+    --light-input-bg: #f8f9fa;
+    --dark-bg: #1a1a1a;
+    --dark-card-bg: #242424;
+    --dark-text: #e0e0e0;
+    --dark-border: #333333;
+    --dark-input-bg: #2c2c2c;
 }
 
-.profile-card-wrapper {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+/* Dark mode specific styles */
+body.dark-mode .profile-container {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
 }
 
 .profile-card {
-    border-radius: 12px;
+    background-color: var(--light-card-bg);
+    border: 1px solid var(--light-border);
+    color: var(--light-text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .profile-card {
+    background-color: var(--dark-card-bg);
+    border: 1px solid var(--dark-border);
+    color: var(--dark-text);
+}
+
+.profile-info-value {
+    color: var(--light-text);
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .profile-info-value {
+    color: var(--dark-text);
+}
+
+.profile-input-field {
+    background-color: var(--light-input-bg);
+    border-color: var(--light-border);
+    color: var(--light-text);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .profile-input-field {
+    background-color: var(--dark-input-bg);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+.profile-info-label,
+.profile-label,
+.profile-date-joined {
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .profile-info-label,
+body.dark-mode .profile-label,
+body.dark-mode .profile-date-joined {
+    color: #9e9e9e;
+}
+
+/* Content container */
+.profile-content-container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+/* Card wrapper */
+.profile-card-wrapper {
+    width: 100%;
+    max-width: 450px;
+}
+
+/* Card styling */
+.profile-card {
+    border-radius: 10px;
     overflow: hidden;
-    border: none;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    background: inherit;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
 }
 
+body.dark-mode .profile-card {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Card title container - adjusted for better spacing with avatar */
 .profile-title-container {
-    background: linear-gradient(135deg, #009688 0%, #4DB6AC 100%);
-    padding: 1.25rem 0;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    padding: 1.5rem 0 2.5rem; /* Increased bottom padding for better avatar spacing */
     text-align: center;
-    border-bottom: 3px solid #80CBC4;
+    border-bottom: 2px solid var(--primary-lightest);
 }
 
+/* Card title */
 .profile-title {
     color: white;
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-family: "Bruno Ace SC", cursive;
     margin: 0;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
 }
 
+/* Avatar container - repositioned to maintain proper spacing */
 .profile-avatar-container {
     display: flex;
     justify-content: center;
-    margin-top: -30px;
+    margin-top: -40px; /* Adjusted to create proper spacing from title */
     position: relative;
     z-index: 10;
 }
 
+/* Avatar circle */
 .profile-avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #009688 0%, #4DB6AC 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: bold;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
     border: 3px solid white;
+    transition: all 0.3s ease;
 }
 
+body.dark-mode .profile-avatar {
+    border-color: var(--dark-card-bg);
+}
+
+/* Card body - adjusted padding for better alignment */
 .profile-body-container {
-    padding: 2rem 1.5rem 1.5rem;
+    padding: 1.75rem 1.75rem 1.5rem;
     background-color: transparent;
 }
 
+/* Profile details */
 .profile-details {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
+/* Info item - reduced spacing */
 .profile-info-item {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease;
 }
 
+body.dark-mode .profile-info-item {
+    border-bottom-color: var(--dark-border);
+}
+
+/* Info labels */
 .profile-info-label {
-    font-size: 0.9rem;
-    color: #6c757d;
+    font-size: 0.85rem;
     margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
+/* Info values */
 .profile-info-value {
     font-size: 1.1rem;
     font-weight: 500;
     margin-bottom: 0;
-    color: inherit;
+    padding-left: 0.25rem;
 }
 
+/* Join date - reduced spacing and improved styling */
 .profile-date-joined {
     font-size: 0.85rem;
-    color: #6c757d;
-    margin: 1rem 0;
+    margin: 0.5rem 0 0.75rem; /* Reduced margin for tighter spacing */
     font-style: italic;
+    text-align: right; /* Aligned to right for more professional look */
+    color: #888;
+    padding-right: 0.25rem;
+    border-top: 1px dashed rgba(0, 0, 0, 0.05); /* Added subtle separator */
+    padding-top: 0.5rem;
 }
 
+body.dark-mode .profile-date-joined {
+    color: #9e9e9e;
+    border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Form labels */
 .profile-label {
-    font-size: 0.9rem;
-    color: #6c757d;
+    font-size: 0.85rem;
     margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
+/* Input fields */
 .profile-input-field {
-    height: 45px;
-    border-radius: 22px;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+    height: 42px;
+    border-radius: 21px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.95rem;
     border: 1px solid #ddd;
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     transition: all 0.2s ease;
-    background-color: transparent;
+    margin-bottom: 0.75rem;
+}
+
+.profile-input-field:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 150, 136, 0.15);
+    outline: none;
+}
+
+body.dark-mode .profile-input-field:focus {
+    box-shadow: 0 0 0 2px rgba(77, 182, 172, 0.25);
 }
 
 /* Placeholder styling */
 .profile-input-field::placeholder {
-    color: #80CBC4;
+    color: #adb5bd;
     opacity: 0.7;
 }
 
-/* For Firefox */
-.profile-input-field::-moz-placeholder {
-    color: #80CBC4;
-    opacity: 0.7;
+body.dark-mode .profile-input-field::placeholder {
+    color: #6c757d;
 }
 
-/* For Internet Explorer */
-.profile-input-field:-ms-input-placeholder {
-    color: #80CBC4;
-    opacity: 0.7;
-}
-
-/* For Edge */
-.profile-input-field::-ms-input-placeholder {
-    color: #80CBC4;
-    opacity: 0.7;
-}
-
+/* Button container - adjusted for better layout */
 .profile-buttons-container {
     display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
+    gap: 0.75rem;
+    margin-top: 1.25rem; /* Reduced top margin */
 }
 
+/* Primary buttons */
 .profile-edit-button,
 .profile-save-button {
     flex: 1;
-    height: 45px;
-    border-radius: 22px;
-    font-weight: bold;
-    font-size: 1rem;
+    height: 42px;
+    border-radius: 21px;
+    font-weight: 600;
+    font-size: 0.95rem;
     color: white;
     border: none;
-    background-color: #009688;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    background-color: var(--primary-color);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
+    letter-spacing: 0.5px;
 }
 
 .profile-edit-button:hover,
 .profile-save-button:hover {
-    background-color: #00796B;
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.12);
 }
 
+/* Secondary buttons */
 .profile-password-button,
 .profile-cancel-button {
     flex: 1;
-    height: 45px;
-    border-radius: 22px;
-    font-weight: bold;
-    font-size: 1rem;
-    color: #009688;
-    border: 1px solid #009688;
+    height: 42px;
+    border-radius: 21px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
     background-color: transparent;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+body.dark-mode .profile-password-button,
+body.dark-mode .profile-cancel-button {
+    color: var(--primary-light);
+    border-color: var(--primary-light);
 }
 
 .profile-password-button:hover,
 .profile-cancel-button:hover {
-    background-color: rgba(0, 150, 136, 0.1);
+    background-color: rgba(0, 150, 136, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
+body.dark-mode .profile-password-button:hover,
+body.dark-mode .profile-cancel-button:hover {
+    background-color: rgba(77, 182, 172, 0.08);
+}
+
+/* Back button */
 .profile-back-button {
     position: absolute;
     top: 15px;
@@ -196,28 +334,83 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 6px 10px;
-    background-color: #009688;
+    padding: 6px 14px;
+    background-color: var(--primary-color);
     color: white;
     border-radius: 20px;
     text-decoration: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
     z-index: 10;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     font-weight: 500;
     font-size: 0.9rem;
 }
 
 .profile-back-button:hover {
-    background-color: #00796B;
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
 }
 
+.profile-back-button svg {
+    transition: transform 0.2s ease;
+}
+
+.profile-back-button:hover svg {
+    transform: translateX(-3px);
+}
+
+/* Loading spinner */
 .profile-loader {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    color: #009688;
+    gap: 1.25rem;
+    color: var(--primary-color);
+}
+
+body.dark-mode .profile-loader {
+    color: var(--primary-light);
+}
+
+.profile-loader .spinner-border {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 576px) {
+    .profile-body-container {
+        padding: 1.75rem 1.25rem 1.25rem;
+    }
+    
+    .profile-back-button {
+        top: 10px;
+        left: 10px;
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .profile-back-button span {
+        display: none;
+    }
+    
+    .profile-buttons-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .profile-title {
+        font-size: 1.5rem;
+    }
+    
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+    
+    .profile-date-joined {
+        text-align: center; /* Center on mobile */
+    }
 }

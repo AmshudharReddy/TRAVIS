@@ -74,8 +74,6 @@ const UserProfile = (props) => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        // Note: This is a placeholder for update functionality
-        // You'll need to implement the backend API for updating user details
         try {
             // Simulating update - replace with actual API call
             setUser({
