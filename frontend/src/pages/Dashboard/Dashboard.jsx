@@ -12,6 +12,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const responseRef = useRef(null);
 
+  const dashboardClasses = `dashboard ${darkMode ? "dark-mode" : ""} ${response ? "response-active" : ""} font-size-${fontSize}`;
 
   const speak = (text) => {
     if ("speechSynthesis" in window) {
@@ -25,13 +26,21 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
     }
   };
 
-  const handleQuerySubmit = async (query) => {
+  const handleQuerySubmit = async (e) => {
+    if (e) e.preventDefault();
+
+    if (!query.trim()) return;
+
+    const currentQuery = query.trim();
     const authToken = sessionStorage.getItem("auth-token");
 
     if (!authToken) {
       console.error("User is not authenticated");
       return;
     }
+
+    // Clear the input box immediately after submission
+    setQuery("");
 
     try {
       const response = await fetch("http://localhost:5000/api/query", {
@@ -40,13 +49,15 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
           "Content-Type": "application/json",
           "auth-token": authToken, // Send the token in the request header
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query: currentQuery }),
       });
 
       const data = await response.json();
       if (response.ok) {
         console.log("Query processed:", data);
         setResponse(data.response || "No response received");
+        // Fetch updated history after new query is processed
+        fetchQueryHistory();
         // speak(data.response);
       } else {
         console.error("Error:", data.error);
@@ -64,6 +75,8 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
     setTimeout(() => {
       setResponse(null);
       setIsTransitioning(false);
+      // Ensure query is cleared when exiting response mode
+      setQuery("");
     }, 300);
   };
 
@@ -75,7 +88,6 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
     }
   };
 
-
   useEffect(() => {
     localStorage.setItem('fontSize', fontSize);
   }, [fontSize]);
@@ -84,16 +96,52 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleQuerySubmit(query);
+      handleQuerySubmit();
     }
   };
 
-  // Recent highlights/history items
-  const recentHighlights = [
-    { id: 1, query: "Sample Query 1", response: "Sample Response 1" },
-    { id: 2, query: "Sample Query 2", response: "Sample Response 2" },
-    { id: 3, query: "Sample Query 3", response: "Sample Response 3" },
-  ];
+  // Replace 'history' with 'queryHistory'
+  const [queryHistory, setQueryHistory] = useState([]);
+  const [recentHighlights, setRecentHighlights] = useState([]);
+
+  // Function to fetch query history
+  const fetchQueryHistory = () => {
+    const authToken = sessionStorage.getItem("auth-token");
+
+    if (!authToken) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    fetch("http://localhost:5000/api/query/history?limit=3&sort=-createdAt", {
+      headers: { "auth-token": authToken }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setQueryHistory(data);
+        
+        // Create recent highlights from the fetched data - most recent first
+        const highlights = data
+          .slice(0, 3)  // Take only first 3 (should already be limited by API)
+          .map((entry, index) => ({
+            id: index + 1,
+            query: entry.query,
+            response: entry.response,
+          }));
+        
+        setRecentHighlights(highlights);
+      })
+      .catch((err) => {
+        console.error("Error fetching history:", err);
+      });
+  };
+
+  // Fetch query history when component loads
+  useEffect(() => {
+    fetchQueryHistory();
+  }, []);
+
+
 
   return (
     <div className={`dashboard ${darkMode ? "dark-mode" : ""} ${response ? "response-active" : ""}`}>
@@ -111,7 +159,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
           {response && (
             <div className="response-mode" ref={responseRef}>
               <div className="response-header">
-                <h3>AI Response</h3>
+                <h3>AI response</h3>
                 <button onClick={handleCloseResponse} className="close-response-btn" title="Close Response">
                   <FaTimes />
                 </button>
@@ -145,7 +193,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                   style={{ fontSize: `var(--font-size-${fontSize})` }}
                 />
                 <button
-                  onClick={() => handleQuerySubmit(query)}
+                  onClick={handleQuerySubmit}
                   className="process-btn"
                   title="Process Query"
                   disabled={query.trim() === ""}
@@ -249,31 +297,70 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
               )}
 
               {/* Recent Highlights Popup */}
+              {/* Recent Highlights Popup - Updated Component Structure */}
               {activePopup === 'recent' && (
-                <div className="popup-content">
-                  <h2>Recent Highlights</h2>
-                  <ul className="highlights-list">
-                    {recentHighlights.map((item) => (
-                      <li key={item.id} className="highlight-item">
-                        <div className="highlight-query">{item.query}</div>
-                        <div className="highlight-response">{item.response}</div>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="popup-actions">
-                    <Link
-                      to="/history"
-                      className="view-all-link"
-                      onClick={() => setActivePopup(null)}
-                    >
-                      View Full Query History
-                    </Link>
-                    <button
-                      onClick={() => setActivePopup(null)}
-                      className="secondary-btn"
-                    >
-                      Close
-                    </button>
+                <div className="popup-overlay" onClick={() => setActivePopup(null)}>
+                  <div className={`popup-container recent-popup`} onClick={(e) => e.stopPropagation()}>
+                    <div className="popup-content recent-highlights">
+                      {/* Fixed Header */}
+                      <div className="recent-highlights-header">
+                        <h2>Recent Highlights</h2>
+                        <span>{recentHighlights.length} of {queryHistory.length} items</span>
+                      </div>
+
+                      {/* Scrollable List Container */}
+                      <div className="highlights-list-container">
+                        {recentHighlights.length > 0 ? (
+                          <ul className="highlights-list">
+                            {recentHighlights.map((item) => (
+                              <li key={item.id} className="highlight-item">
+                                <div className="highlight-query">{item.query}</div>
+                                <div className="highlight-response">
+                                  {item.response.length > 200
+                                    ? `${item.response.substring(0, 200)}...`
+                                    : item.response}
+                                </div>
+                                <div className="highlight-actions">
+                                  <button
+                                    className="highlight-btn"
+                                    title="Use this query again"
+                                    onClick={() => {
+                                      setQuery(item.query);
+                                      setActivePopup(null);
+                                    }}
+                                  >
+                                    Reuse Query
+                                  </button>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="no-highlights">
+                            <div className="no-highlights-icon">📋</div>
+                            <p>No recent queries found</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Fixed Footer */}
+                      <div className="popup-actions recent-highlights-actions">
+                        <Link
+                          to="/history"
+                          className="view-all-link"
+                          onClick={() => setActivePopup(null)}
+                        >
+                          <span>View All Queries</span>
+                          <span>→</span>
+                        </Link>
+                        <button
+                          onClick={() => setActivePopup(null)}
+                          className="secondary-btn"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

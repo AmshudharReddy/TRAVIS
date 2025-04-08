@@ -10,7 +10,6 @@ const Navbar = ({ darkMode, setDarkMode }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [userName, setUserName] = useState("");
 
-
     useEffect(() => {
         const fetchUserDetails = async() => {
             try{
@@ -21,7 +20,6 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                             'auth-token': authToken
                         }
                     });
-                    // console.log(response.data);
                     setUserName(response.data.name);
                 }
             } catch(error){
@@ -31,7 +29,6 @@ const Navbar = ({ darkMode, setDarkMode }) => {
 
         fetchUserDetails();
     }, []);
-
 
     const handleLogout = () => {
         sessionStorage.removeItem('auth-token');
@@ -47,9 +44,25 @@ const Navbar = ({ darkMode, setDarkMode }) => {
     };
 
     const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-        localStorage.setItem('darkMode', !darkMode);
+        const newDarkMode = !darkMode;
+        setDarkMode(newDarkMode);
+        localStorage.setItem('darkMode', newDarkMode);
+        // Apply dark mode to the entire document body to ensure consistency
+        if (newDarkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
     };
+
+    // Apply dark mode to body on initial load
+    useEffect(() => {
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }, [darkMode]);
 
     return (
         <nav className={`navbar ${darkMode ? "dark-mode" : ""}`}>
@@ -74,7 +87,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                     {/* Navigation Links */}
                     <ul className="nav-links">
                         <li className="nav-item">
-                            <Link style={{fontSize: "25px"}}
+                            <Link 
                                 to="/"
                                 className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
                                 onClick={closeMenu}
@@ -83,7 +96,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link style={{fontSize: "25px"}}
+                            <Link 
                                 to="/dashboard"
                                 className={`nav-link ${location.pathname === "/dashboard" ? "active" : ""}`}
                                 onClick={closeMenu}
@@ -92,7 +105,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link style={{fontSize: "25px"}}
+                            <Link 
                                 to="/about"
                                 className={`nav-link ${location.pathname === "/about" ? "active" : ""}`}
                                 onClick={closeMenu}
@@ -112,7 +125,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                         {sessionStorage.getItem('auth-token') ? (
                             <div className="user-section">
                                 <Link to="/profile" className="profile-link">
-                                    <FaUserCircle size={38} className="user-icon" />
+                                    <FaUserCircle className="user-icon" />
                                     <span className="user-name">{userName ? `${userName}` : "Agent Athreya"}</span>
                                 </Link>
                                 <button
