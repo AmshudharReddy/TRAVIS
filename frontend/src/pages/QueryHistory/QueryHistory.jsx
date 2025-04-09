@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaHistory, FaSpinner, FaExclamationCircle } from "react-icons/fa";
+import { FaHistory, FaSpinner, FaExclamationCircle, FaTag } from "react-icons/fa";
 import "./QueryHistory.css";
 
 const QueryHistory = ({ darkMode = false }) => {
@@ -64,6 +64,15 @@ const QueryHistory = ({ darkMode = false }) => {
                 {history.map((entry, index) => (
                     <li key={index} className="history-item">
                         <div className="history-content">
+                            <div className="history-header">
+                                <div className="history-category">
+                                    <FaTag className="category-icon" />
+                                    <span className="category-text">{entry.category}</span>
+                                </div>
+                                <span className="timestamp">
+                                    {new Date(entry.createdAt).toLocaleString()}
+                                </span>
+                            </div>
                             <div className="history-query">
                                 <span className="label">Query:</span>
                                 <p>{entry.query}</p>
@@ -71,11 +80,6 @@ const QueryHistory = ({ darkMode = false }) => {
                             <div className="history-response">
                                 <span className="label">Response:</span>
                                 <p>{entry.response}</p>
-                            </div>
-                            <div className="history-meta">
-                                <span className="timestamp">
-                                    {new Date(entry.createdAt).toLocaleString()}
-                                </span>
                             </div>
                         </div>
                     </li>

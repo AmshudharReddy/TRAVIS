@@ -269,30 +269,9 @@ body.dark-mode .profile-input-field::placeholder {
     margin-top: 1.25rem; /* Reduced top margin */
 }
 
-/* Primary buttons */
+/* All buttons - Common styling for light mode */
 .profile-edit-button,
-.profile-save-button {
-    flex: 1;
-    height: 42px;
-    border-radius: 21px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: white;
-    border: none;
-    background-color: var(--primary-color);
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
-}
-
-.profile-edit-button:hover,
-.profile-save-button:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.12);
-}
-
-/* Secondary buttons */
+.profile-save-button,
 .profile-password-button,
 .profile-cancel-button {
     flex: 1;
@@ -308,12 +287,18 @@ body.dark-mode .profile-input-field::placeholder {
     letter-spacing: 0.5px;
 }
 
+/* All buttons - Dark mode styling */
+body.dark-mode .profile-edit-button,
+body.dark-mode .profile-save-button,
 body.dark-mode .profile-password-button,
 body.dark-mode .profile-cancel-button {
     color: var(--primary-light);
     border-color: var(--primary-light);
 }
 
+/* All buttons - Hover effects for light mode */
+.profile-edit-button:hover,
+.profile-save-button:hover,
 .profile-password-button:hover,
 .profile-cancel-button:hover {
     background-color: rgba(0, 150, 136, 0.08);
@@ -321,6 +306,9 @@ body.dark-mode .profile-cancel-button {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
+/* All buttons - Hover effects for dark mode */
+body.dark-mode .profile-edit-button:hover,
+body.dark-mode .profile-save-button:hover,
 body.dark-mode .profile-password-button:hover,
 body.dark-mode .profile-cancel-button:hover {
     background-color: rgba(77, 182, 172, 0.08);

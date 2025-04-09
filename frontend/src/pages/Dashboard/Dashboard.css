@@ -1,4 +1,4 @@
-/* Dashboard.css - Updated with improved response mode, welcome message and input styling */
+/* Dashboard.css - Updated with improved response mode, welcome message, input styling and dynamic font sizing */
 :root {
   --primary-color: #4a6fa5;
   --primary-hover: #3a5a8a;
@@ -16,6 +16,21 @@
   --font-size-small: 20px;
   --font-size-medium: 40px;
   --font-size-large: 60px;
+  
+  /* Response mode dynamic font sizes - small */
+  --font-size-query-small: 1.1rem;
+  --font-size-category-small: 0.7rem;
+  --font-size-response-small: 0.95rem;
+  
+  /* Response mode dynamic font sizes - medium */
+  --font-size-query-medium: 1.3rem;
+  --font-size-category-medium: 0.8rem;
+  --font-size-response-medium: 1.1rem;
+  
+  /* Response mode dynamic font sizes - large */
+  --font-size-query-large: 1.5rem;
+  --font-size-category-large: 0.9rem;
+  --font-size-response-large: 1.25rem;
 }
 
 /* Main Dashboard Container */
@@ -56,8 +71,8 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 25px;
+  gap: 1.2rem; /* Reduced gap to minimize extra space */
+  margin-top: 20px; /* Slightly reduced top margin */
   transition: var(--transition);
 }
 
@@ -74,7 +89,7 @@
   text-align: center;
   box-shadow: var(--box-shadow);
   transition: var(--transition);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem; /* Reduced margin */
   border-left: 5px solid var(--primary-color);
 }
 
@@ -108,7 +123,7 @@
 
 /* Query Label */
 .query-label {
-  margin-bottom: -0.5rem;
+  margin-bottom: -0.3rem; /* Reduced negative margin */
   font-weight: 500;
   color: #4b4e51;
   text-align: center;
@@ -122,7 +137,7 @@
 /* Enhanced Query Section */
 .query-section {
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem; /* Reduced bottom margin */
   transition: var(--transition);
 }
 
@@ -151,7 +166,12 @@
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Professional Query Input */
+/* Ensure query input in response mode also respects font size */
+.response-mode-query .query-input {
+  font-size: var(--font-size-response); /* Match response text size */
+}
+
+/* Professional Query Input - Increased height */
 .query-input-container {
   position: relative;
   width: 100%;
@@ -182,10 +202,10 @@
 
 .query-input {
   flex-grow: 1;
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 1.5rem; /* Increased padding for taller input */
   border: none;
   resize: none;
-  min-height: 60px;
+  min-height: 80px; /* Increased height from 60px to 80px */
   font-family: inherit;
   outline: none;
   background-color: transparent;
@@ -221,11 +241,11 @@
   opacity: 0.7;
 }
 
-/* Enhanced Response Mode Styles */
+/* Enhanced Response Mode Styles with improved spacing and alignment */
 .response-mode {
   background-color: white;
   border-radius: var(--border-radius);
-  padding: 1.5rem;
+  padding: 2rem;
   box-shadow: var(--box-shadow);
   transition: var(--transition);
   position: relative;
@@ -250,23 +270,55 @@
 .response-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  align-items: flex-start; /* Changed from center to allow for multi-line query */
+  margin-bottom: 1.5rem; /* Increased spacing */
   border-bottom: 1px solid #eee;
-  padding-bottom: 0.75rem;
+  padding-bottom: 1rem; /* Increased padding */
 }
 
 .dark-mode .response-header {
   border-bottom-color: #444;
 }
 
-.response-header h3 {
+/* Query display in response header with improved spacing */
+.query-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Increased gap */
+  width: 85%; /* Control width to ensure room for close button */
+}
+
+.query-display h3 {
   margin: 0;
   color: var(--primary-color);
   font-weight: 600;
+  font-size: var(--font-size-query); /* Dynamic font size */
+  line-height: 1.4;
+  overflow-wrap: break-word; /* Allow wrapping for long queries */
+  white-space: normal; /* Allow multiple lines */
+  overflow: visible; /* Show full content */
 }
 
-.dark-mode .response-header h3 {
+.dark-mode .query-display h3 {
+  color: #6a9cde;
+}
+
+/* Category badge with improved styling and dynamic font size */
+.response-category {
+  font-size: var(--font-size-category); /* Dynamic font size */
+  font-weight: 500;
+  background-color: rgba(74, 111, 165, 0.1);
+  color: var(--primary-color);
+  padding: 0.4rem 0.9rem; /* Increased padding */
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  max-width: fit-content;
+  margin-top: 0.25rem; /* Space after query */
+}
+
+.dark-mode .response-category {
+  background-color: rgba(106, 156, 222, 0.2);
   color: #6a9cde;
 }
 
@@ -282,6 +334,7 @@
   justify-content: center;
   border-radius: 50%;
   transition: var(--transition);
+  margin-top: 0.25rem; /* Align with content */
 }
 
 .close-response-btn:hover {
@@ -294,15 +347,19 @@
   color: #6a9cde;
 }
 
+/* Response content with improved spacing and dynamic font size */
 .response-content {
   position: relative;
   line-height: 1.6;
+  padding-top: 0.5rem; /* Space after the divider */
+  font-size: var(--font-size-response); /* Dynamic font size */
 }
 
+/* Text-to-speech button repositioned */
 .tts-btn {
   position: absolute;
   right: 0;
-  top: 0;
+  top: 0.5rem; /* Adjusted position */
   background: none;
   border: none;
   cursor: pointer;
@@ -328,12 +385,12 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Button Navigation */
+/* Button Navigation - tightened spacing */
 .button-nav {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  margin: 1rem 0;
+  margin: 0.75rem 0; /* Reduced margin */
   flex-wrap: wrap;
 }
 
@@ -350,7 +407,6 @@
 
 .icon-btn:hover {
   transform: translateY(-3px);
-  /* color:salmon; */
 }
 
 .circle-icon {
@@ -370,6 +426,26 @@
 .dark-mode .circle-icon {
   background-color: var(--dark-component-bg);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Highlight category style */
+.highlight-category {
+  font-size: 0.7rem;
+  font-weight: 500;
+  background-color: rgba(74, 111, 165, 0.1);
+  color: var(--primary-color);
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  max-width: fit-content;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.dark-mode .highlight-category {
+  background-color: rgba(106, 156, 222, 0.2);
+  color: #6a9cde;
 }
 
 /* Improved Popup Styles */
@@ -392,6 +468,7 @@
   to { opacity: 1; }
 }
 
+/* Improved Popup Styles (continued) */
 .popup-container {
   background-color: white;
   border-radius: var(--border-radius);
@@ -466,6 +543,34 @@
   background-color: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
+}
+
+/* Font size classes that set all dynamic font sizes */
+.font-size-small {
+  --font-size-query: var(--font-size-query-small);
+  --font-size-category: var(--font-size-category-small);
+  --font-size-response: var(--font-size-response-small);
+  --popup-heading-size: 1.3rem;
+  --popup-text-size: 0.85rem;
+  --popup-button-size: 0.8rem;
+}
+
+.font-size-medium {
+  --font-size-query: var(--font-size-query-medium);
+  --font-size-category: var(--font-size-category-medium);
+  --font-size-response: var(--font-size-response-medium);
+  --popup-heading-size: 1.5rem;
+  --popup-text-size: 0.95rem;
+  --popup-button-size: 0.9rem;
+}
+
+.font-size-large {
+  --font-size-query: var(--font-size-query-large);
+  --font-size-category: var(--font-size-category-large);
+  --font-size-response: var(--font-size-response-large);
+  --popup-heading-size: 1.7rem;
+  --popup-text-size: 1.1rem;
+  --popup-button-size: 1rem;
 }
 
 /* Enhanced Recent Highlights Popup - Improved Layout and Responsive Design */
@@ -642,46 +747,6 @@
   background-color: rgba(106, 156, 222, 0.1);
 }
 
-/* Font size classes that apply to the entire app including popups */
-.font-size-small {
-  --popup-heading-size: 1.3rem;
-  --popup-text-size: 0.85rem;
-  --popup-button-size: 0.8rem;
-}
-
-.font-size-medium {
-  --popup-heading-size: 1.5rem;
-  --popup-text-size: 0.95rem;
-  --popup-button-size: 0.9rem;
-}
-
-.font-size-large {
-  --popup-heading-size: 1.7rem;
-  --popup-text-size: 1.1rem;
-  --popup-button-size: 1rem;
-}
-
-/* Apply font sizes to popup elements */
-.popup-content h2 {
-  font-size: var(--popup-heading-size);
-}
-
-.popup-content p, 
-.highlight-response,
-.setting-item span {
-  font-size: var(--popup-text-size);
-}
-
-.highlight-query {
-  font-size: calc(var(--popup-text-size) * 1.1);
-}
-
-.highlight-btn, 
-.popup-actions button,
-.view-all-link {
-  font-size: var(--popup-button-size);
-}
-
 /* No highlights state styling */
 .no-highlights {
   text-align: center;
@@ -693,31 +758,6 @@
   font-size: 2.5rem;
   margin-bottom: 1rem;
   opacity: 0.7;
-}
-
-/* Media queries for responsive design */
-@media (max-width: 768px) {
-  .popup-container.recent-popup {
-    width: 98%;
-    max-width: 600px;
-  }
-}
-
-@media (max-width: 480px) {
-  .popup-container.recent-popup {
-    width: 100%;
-    height: 100vh;
-    max-height: 100vh;
-    border-radius: 0;
-  }
-  
-  .popup-content.recent-highlights {
-    padding: 1rem;
-  }
-  
-  .highlight-actions {
-    justify-content: center;
-  }
 }
 
 /* Settings Popup */
@@ -812,9 +852,6 @@
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
-
-
-
 .view-all-link {
   text-decoration: underline;
   color: #007bff;
@@ -834,7 +871,6 @@
 .dark-mode .view-all-link:hover {
   color: #80c1ff;
 }
-
 
 /* Footer */
 .footer {
@@ -864,6 +900,31 @@
   .welcome-message p {
     max-width: 95%;
   }
+  
+  .popup-container.recent-popup {
+    width: 98%;
+    max-width: 600px;
+  }
+  
+  .query-display h3 {
+    max-width: 75%;
+    font-size: 1rem;
+  }
+  
+  .response-mode {
+    padding: 1.5rem;
+  }
+  
+  .query-display {
+    width: 80%;
+  }
+  
+  :root {
+    /* Slightly smaller fonts on smaller screens */
+    --font-size-query-small: 1rem;
+    --font-size-query-medium: 1.2rem;
+    --font-size-query-large: 1.4rem;
+  }
 }
 
 @media (max-width: 600px) {
@@ -890,5 +951,53 @@
   .font-size-options {
     flex-direction: column;
     gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-container.recent-popup {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .popup-content.recent-highlights {
+    padding: 1rem;
+  }
+  
+  .highlight-actions {
+    justify-content: center;
+  }
+  
+  .query-display h3 {
+    max-width: 65%;
+    font-size: 0.95rem;
+  }
+  
+  .response-mode {
+    padding: 1.25rem;
+  }
+  
+  .response-header {
+    flex-direction: column;
+  }
+  
+  .query-display {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .close-response-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+  
+  :root {
+    /* Even smaller fonts on mobile */
+    --font-size-query-small: 0.95rem;
+    --font-size-query-medium: 1.1rem;
+    --font-size-query-large: 1.3rem;
   }
 }
