@@ -10,13 +10,13 @@ const handleQuery = async (req, res) => {
         if (!query) return res.status(400).json({ error: "Query is required" });
 
         // Get AI response (Mocked for now)
-        const response = await processQuery(query);
+        const {category,response} = await processQuery(query);
 
         // Save query-response to MongoDB linked to user
-        const historyEntry = new QueryHistory({ userId, query, response });
+        const historyEntry = new QueryHistory({ userId, query, category,response });
         await historyEntry.save();
 
-        res.json({ response });
+        res.json({ category,response });
     } catch (error) {
         console.error("Error processing query:", error);
         res.status(500).json({ error: "Internal Server Error" });
