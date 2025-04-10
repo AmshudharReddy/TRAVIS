@@ -1,5 +1,6 @@
 const { processQuery } = require("../services/queryProcessor");
 const QueryHistory = require("../models/QueryHistory");
+const { translateresponse } = require("../services/translatorProcessor");
 
 // Controller for processing user queries
 const handleQuery = async (req, res) => {
@@ -22,6 +23,23 @@ const handleQuery = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+// Controller for translating Model Response
+const translate = async (req, res) => {
+    try {
+        const { response } = req.body;
+        const userId = req.user.id; // Extract user ID from token
+
+        if (!response) return res.status(400).json({ error: "Response is required" });
+
+        // Get translateed response
+        const {translation} = await translateresponse(response);
+
+        res.json({ translation});
+    } catch (error) {
+        console.error("Error processing query:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
 
 // Controller for fetching query history
 const getQueryHistory = async (req, res) => {
@@ -36,4 +54,4 @@ const getQueryHistory = async (req, res) => {
     }
 };
 
-module.exports = { handleQuery, getQueryHistory };
+module.exports = { handleQuery,translate, getQueryHistory };
