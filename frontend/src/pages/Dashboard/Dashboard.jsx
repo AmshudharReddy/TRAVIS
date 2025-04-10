@@ -6,6 +6,7 @@ import { FaPaperPlane, FaTimes, FaVolumeUp, FaMicrophone, FaLaptop, FaMobile, Fa
 const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState(null);
+  const [translatedResponse, setTranslatedResponse] = useState(null); // New state for translation
   const [responseCategory, setResponseCategory] = useState(null);
   const [lastQuery, setLastQuery] = useState("");
   const [activePopup, setActivePopup] = useState(null);
@@ -14,7 +15,6 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const responseRef = useRef(null);
 
-  // Important: Apply font size class to the dashboard container
   const dashboardClasses = `dashboard ${darkMode ? "dark-mode" : ""} ${response ? "response-active" : ""} font-size-${fontSize}`;
 
   const speak = (text) => {
@@ -44,6 +44,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
 
     setLastQuery(currentQuery);
     setQuery("");
+    setTranslatedResponse(null); // Reset translation when submitting a new query
 
     try {
       const response = await fetch("http://localhost:5000/api/query", {
@@ -76,10 +77,43 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
     }
   };
 
+  const handleTranslate = async () => {
+    if (!response) return;
+
+    const authToken = sessionStorage.getItem("auth-token");
+    if (!authToken) {
+      console.error("User is not authenticated");
+      return;
+    }
+    
+    try {
+      const translateResponse = await fetch("http://localhost:5000/api/query/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": authToken,
+        },
+        body: JSON.stringify({ response: response }),
+      });
+      
+      const data = await translateResponse.json();
+      if (translateResponse.ok) {
+        console.log("Translated Response", data);
+        setTranslatedResponse(data.translation || "No translation received");
+      } else {
+        setTranslatedResponse("Translation error: " + (data.error || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Translation request failed:", error);
+      setTranslatedResponse("Network error. Please try again.");
+    }
+  };
+
   const handleCloseResponse = () => {
     setIsTransitioning(true);
     setTimeout(() => {
       setResponse(null);
+      setTranslatedResponse(null); // Clear translation too
       setResponseCategory(null);
       setLastQuery("");
       setIsTransitioning(false);
@@ -123,7 +157,6 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
       .then((res) => res.json())
       .then((data) => {
         setQueryHistory(data);
-        
         const highlights = data
           .slice(0, 3)
           .map((entry, index) => ({
@@ -132,7 +165,6 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
             response: entry.response,
             category: entry.category || "General"
           }));
-        
         setRecentHighlights(highlights);
       })
       .catch((err) => {
@@ -167,10 +199,18 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                 </button>
               </div>
               <div className="response-content">
-                <p>{response}</p>
-                <button onClick={() => speak(response)} className="tts-btn" title="Listen to response">
-                  <FaVolumeUp />
-                </button>
+                <p><strong>Response:</strong> {response}</p>
+                {translatedResponse && (
+                  <p><strong>Telugu Translation:</strong> {translatedResponse}</p>
+                )}
+                <div className="response-actions">
+                  <button onClick={() => speak(response)} className="tts-btn" title="Listen to response">
+                    <FaVolumeUp />
+                  </button>
+                  <button onClick={handleTranslate} className="translate-btn" title="Translate Response">
+                    Translate
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -206,38 +246,19 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
 
           {!response && (
             <div className="button-nav">
-              <button
-                className="icon-btn"
-                onClick={() => togglePopup('speak')}
-                title="Speak"
-              >
+              <button className="icon-btn" onClick={() => togglePopup('speak')} title="Speak">
                 <div className="circle-icon">🎤</div>
                 <span>Speak</span>
               </button>
-
-              <button
-                className="icon-btn"
-                onClick={() => togglePopup('recent')}
-                title="Recent Highlights"
-              >
+              <button className="icon-btn" onClick={() => togglePopup('recent')} title="Recent Highlights">
                 <div className="circle-icon">📊</div>
                 <span>Recent</span>
               </button>
-
-              <button
-                className="icon-btn"
-                onClick={() => togglePopup('fontSize')}
-                title="Font Size"
-              >
+              <button className="icon-btn" onClick={() => togglePopup('fontSize')} title="Font Size">
                 <div className="circle-icon">Aa</div>
                 <span>Font Size</span>
               </button>
-
-              <button
-                className="icon-btn"
-                onClick={() => togglePopup('settings')}
-                title="Settings"
-              >
+              <button className="icon-btn" onClick={() => togglePopup('settings')} title="Settings">
                 <div className="circle-icon">⚙️</div>
                 <span>Settings</span>
               </button>
@@ -274,6 +295,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
           </div>
         )}
 
+        {/* Popups remain unchanged */}
         {activePopup && (
           <div className="popup-overlay" onClick={() => setActivePopup(null)}>
             <div className="popup-container" onClick={(e) => e.stopPropagation()}>
@@ -290,14 +312,12 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                   </div>
                 </div>
               )}
-
               {activePopup === 'recent' && (
                 <div className="popup-content recent-highlights">
                   <div className="recent-highlights-header">
                     <h2>Recent Highlights</h2>
                     <span>{recentHighlights.length} of {queryHistory.length} items</span>
                   </div>
-
                   <div className="highlights-list-container">
                     {recentHighlights.length > 0 ? (
                       <ul className="highlights-list">
@@ -334,26 +354,17 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                       </div>
                     )}
                   </div>
-
                   <div className="popup-actions recent-highlights-actions">
-                    <Link
-                      to="/history"
-                      className="view-all-link"
-                      onClick={() => setActivePopup(null)}
-                    >
+                    <Link to="/history" className="view-all-link" onClick={() => setActivePopup(null)}>
                       <span>View All Queries</span>
                       <span>→</span>
                     </Link>
-                    <button
-                      onClick={() => setActivePopup(null)}
-                      className="secondary-btn"
-                    >
+                    <button onClick={() => setActivePopup(null)} className="secondary-btn">
                       Close
                     </button>
                   </div>
                 </div>
               )}
-
               {activePopup === 'fontSize' && (
                 <div className="popup-content">
                   <h2>Font Size</h2>
@@ -382,7 +393,6 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
                   </div>
                 </div>
               )}
-
               {activePopup === 'settings' && (
                 <div className="popup-content">
                   <h2>Settings</h2>

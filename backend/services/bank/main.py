@@ -1,112 +1,117 @@
 import torch
 import torch.nn as nn
 import json
-import pickle
 import re
-import os
 import numpy as np
 from flask import Flask, request, jsonify
 
-# Define paths (adjust these to relative paths if needed)
-MODEL_PATH = 'transformer_qa_best.pth'
-VOCAB_PATH = 'vocabulary.json'
-LABEL_ENCODER_PATH = 'label_encoder.pkl'
-MODEL_CONFIG_PATH = 'model_config.json'
-
-# Load model configuration
-with open(MODEL_CONFIG_PATH, 'r') as f:
-    model_config = json.load(f)
-
-# Load vocabulary
-with open(VOCAB_PATH, 'r') as f:
+# Load model config and vocab
+with open('model_artifacts/vocabulary.json') as f:
     vocab = json.load(f)
 
-# Load label encoder
-with open(LABEL_ENCODER_PATH, 'rb') as f:
-    label_encoder = pickle.load(f)
+inv_vocab = {v: k for k, v in vocab.items()}
+vocab_size = len(vocab)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Define the TransformerClassifierQA class (same as before)
-class TransformerClassifierQA(nn.Module):
-    def __init__(self, vocab_size, d_model=128, nhead=4, num_encoder_layers=2,
-                 num_classes=1, max_answer_len=27):
-        super(TransformerClassifierQA, self).__init__()
-        self.d_model = d_model
-        self.max_answer_len = max_answer_len
-        self.embedding = nn.Embedding(vocab_size, d_model)
-        self.encoder_pos = nn.Parameter(torch.rand(1000, d_model))
-        encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, batch_first=True)
-        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_encoder_layers)
-        self.decoder_pos = nn.Parameter(torch.rand(max_answer_len, d_model))
-        decoder_layer = nn.TransformerDecoderLayer(d_model=d_model, nhead=nhead, batch_first=True)
-        self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_encoder_layers)
-        self.fc_class = nn.Linear(d_model, num_classes)
-        self.fc_qa = nn.Linear(d_model, vocab_size)
-
-    def forward(self, x, attention_mask=None):
-        x = self.embedding(x) + self.encoder_pos[:x.size(1), :].unsqueeze(0)
-        memory = self.encoder(x, src_key_padding_mask=attention_mask)
-        batch_size = x.size(0)
-        tgt = self.decoder_pos[:self.max_answer_len, :].unsqueeze(0).repeat(batch_size, 1, 1)
-        decoded = self.decoder(tgt, memory, memory_key_padding_mask=attention_mask)
-        cls_token = torch.mean(memory, dim=1)
-        category_output = self.fc_class(cls_token)
-        answer_output = self.fc_qa(decoded)
-        return category_output, answer_output
-
-# Initialize and load the model
-model = TransformerClassifierQA(
-    vocab_size=model_config['vocab_size'],
-    d_model=model_config['d_model'],
-    nhead=model_config['nhead'],
-    num_encoder_layers=model_config['num_encoder_layers'],
-    num_classes=model_config['num_classes'],
-    max_answer_len=model_config['max_answer_len']
-)
-checkpoint = torch.load(MODEL_PATH, map_location=torch.device('cpu'))
-model.load_state_dict(checkpoint)  # Assuming the checkpoint is a direct state dict
-model.eval()
-
-# Preprocessing functions (same as before)
+# Preprocess and tokenize
 def preprocess(text):
-    text = re.sub(r'\W', ' ', text).lower().strip()
-    return text
+    text = re.sub(r'\W', ' ', text)
+    return text.lower().strip()
 
 def tokenize(text):
     return [vocab.get(word, vocab['<UNK>']) for word in text.split()]
 
-def pad_sequence(sequence, max_len, padding_value=0):
-    if len(sequence) > max_len:
-        return sequence[:max_len]
-    return sequence + [padding_value] * (max_len - len(sequence))
+def decode(tokens):
+    return ' '.join([inv_vocab.get(t, '<UNK>') for t in tokens if t not in [vocab['<PAD>'], vocab['<EOS>'], vocab['<SOS>']]])
 
-# Prediction function (same as before)
-def predict(query):
-    processed_query = preprocess(query)
-    tokenized_query = tokenize(processed_query)
-    padded_query = pad_sequence(tokenized_query, model_config['max_query_len'])
-    input_tensor = torch.tensor([padded_query], dtype=torch.long)
-    attention_mask = (input_tensor == 0)
-    with torch.no_grad():
-        category_output, answer_output = model(input_tensor, attention_mask=attention_mask)
-    predicted_category = torch.argmax(category_output, dim=1).item()
-    category_label = label_encoder.inverse_transform([predicted_category])[0]
-    predicted_answer_tokens = torch.argmax(answer_output, dim=2).squeeze(0).tolist()
-    answer_words = [word for word, idx in vocab.items() if idx in predicted_answer_tokens]
-    response = ' '.join(answer_words)
-    return category_label, response
+def pad_sequence(seq, max_len, pad_val=0):
+    return torch.tensor(seq + [pad_val] * (max_len - len(seq)), dtype=torch.long).unsqueeze(0).to(device)
+
+# Define PositionalEncoding class
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len=5000):  # Fixed: _init_ to __init__
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float32).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-np.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        self.pe = pe.unsqueeze(0)
+
+    def forward(self, x):
+        return x + self.pe[:, :x.size(1), :].to(x.device)
+
+# Define TransformerQA class
+class TransformerQA(nn.Module):
+    def __init__(self, vocab_size, d_model=256, nhead=8, num_layers=4, dropout=0.1):  # Fixed: _init_ to __init__
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, d_model, padding_idx=0)
+        self.pos_encoder = PositionalEncoding(d_model)
+        encoder_layer = nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward=1024, dropout=dropout, batch_first=True)
+        decoder_layer = nn.TransformerDecoderLayer(d_model, nhead, dim_feedforward=1024, dropout=dropout, batch_first=True)
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
+        self.fc = nn.Linear(d_model, vocab_size)
+
+    def forward(self, src, tgt, src_key_padding_mask=None, tgt_mask=None):
+        src_emb = self.pos_encoder(self.embedding(src))
+        tgt_emb = self.pos_encoder(self.embedding(tgt))
+        memory = self.encoder(src_emb, src_key_padding_mask=src_key_padding_mask)
+        output = self.decoder(tgt_emb, memory, tgt_mask=tgt_mask, memory_key_padding_mask=src_key_padding_mask)
+        return self.fc(output)
+
+# Load trained model
+model = TransformerQA(vocab_size).to(device)
+model.load_state_dict(torch.load('model_artifacts/transformer_qa_final.pth', map_location=device))
+model.eval()
+
+# Generate response function
+def generate_response(query, max_len=50):
+    query = preprocess(query)
+    query_ids = tokenize(query)
+    query_tensor = pad_sequence(query_ids, len(query_ids))
+
+    src_mask = (query_tensor == vocab['<PAD>'])
+
+    generated = [vocab['<SOS>']]
+    for _ in range(max_len):
+        tgt_tensor = torch.tensor(generated, dtype=torch.long).unsqueeze(0).to(device)
+        tgt_mask = torch.triu(torch.full((len(generated), len(generated)), float('-inf')), diagonal=1).to(device)
+        with torch.no_grad():
+            out = model(query_tensor, tgt_tensor, src_key_padding_mask=src_mask, tgt_mask=tgt_mask)
+            next_token = out[0, -1, :].argmax().item()
+
+        if next_token == vocab['<EOS>']:
+            break
+        generated.append(next_token)
+
+    return decode(generated)
 
 # Initialize Flask app
 app = Flask(__name__)
 
-# Define API endpoint
+# API endpoint for query processing
 @app.route('/predict', methods=['POST'])
-def predict_endpoint():
-    data = request.get_json()
-    query = data.get('query', '')
-    if not query:
-        return jsonify({'error': 'No query provided'}), 400
-    category, response = predict(query)
-    return jsonify({'category': category, 'response': response})
+def process_query():
+    try:
+        # Get JSON data from the request
+        data = request.get_json()
+        if not data or 'query' not in data:
+            return jsonify({"error": "No query provided"}), 400
+        
+        query = data['query']
+        if not isinstance(query, str) or not query.strip():
+            return jsonify({"error": "Invalid query"}), 400
 
-if __name__ == '__main__':
+        # Generate response
+        response = generate_response(query)
+        
+        # Return the response as JSON
+        return jsonify({"response": response}), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Run the Flask app
+if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
