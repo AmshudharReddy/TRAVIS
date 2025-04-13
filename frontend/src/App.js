@@ -15,8 +15,13 @@ import UserProfile from './pages/UserProflie/UserProfile';
 function App() {
   const location = useLocation();
   const [alert, setAlert] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
-  const [fontSize, setFontSize] = useState('small');
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode')=='true'; // or your default
+  });
+  const [fontSize, setFontSize] = useState(() => {
+    return localStorage.getItem('fontSize') || 'small'; // or your default
+  });
+  
 
   // Load darkMode preference from localStorage on initial load
   useEffect(() => {

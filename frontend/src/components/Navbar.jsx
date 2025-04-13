@@ -1,37 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaUserCircle, FaBars, FaTimes, FaSun, FaMoon } from "react-icons/fa";
+import { FaUserCircle, FaBars, FaTimes, FaSun, FaMoon, FaHome, FaTachometerAlt, FaInfoCircle, FaUser } from "react-icons/fa";
 import './Navbar.css';
 import axios from 'axios';
 
 const Navbar = ({ darkMode, setDarkMode }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    // const [isPending, startTransition] = useTransition();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [userName, setUserName] = useState("");
+    const [userName, setUserName] = useState(sessionStorage.getItem("username") || "");
 
     useEffect(() => {
-        const fetchUserDetails = async() => {
-            try{
-                const authToken = sessionStorage.getItem("auth-token");
-                if(authToken){
-                    const response = await axios.post('http://localhost:5000/api/auth/getuser', {}, {
-                        headers: {
-                            'auth-token': authToken
-                        }
-                    });
-                    setUserName(response.data.name);
-                }
-            } catch(error){
-                console.error("Error fetching the User Details: ", error);
+        const fetchUserDetails = async () => {
+          const authToken = sessionStorage.getItem("auth-token");
+          if (authToken) {
+            try {
+              const response = await axios.post('http://localhost:5000/api/auth/getuser', {}, {
+                headers: { 'auth-token': authToken }
+              });
+              setUserName(response.data.name);
+              sessionStorage.setItem("username", response.data.name); // cache for next load
+            } catch (error) {
+              console.error("Error fetching the User Details: ", error);
+            }
+          }
+        };
+      
+        fetchUserDetails();
+      }, []);
+      
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            const navContainer = document.querySelector('.nav-container');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (isMenuOpen && navContainer && !navContainer.contains(event.target) && !menuToggle.contains(event.target)) {
+                setIsMenuOpen(false);
             }
         };
 
-        fetchUserDetails();
-    }, []);
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isMenuOpen]);
+
+    // Close menu when route changes
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [location]);
 
     const handleLogout = () => {
         sessionStorage.removeItem('auth-token');
+        sessionStorage.removeItem("username");
         navigate('/login');
     };
 
@@ -47,7 +71,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
         const newDarkMode = !darkMode;
         setDarkMode(newDarkMode);
         localStorage.setItem('darkMode', newDarkMode);
-        // Apply dark mode to the entire document body to ensure consistency
+        
         if (newDarkMode) {
             document.body.classList.add('dark-mode');
         } else {
@@ -55,7 +79,6 @@ const Navbar = ({ darkMode, setDarkMode }) => {
         }
     };
 
-    // Apply dark mode to body on initial load
     useEffect(() => {
         if (darkMode) {
             document.body.classList.add('dark-mode');
@@ -73,13 +96,22 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                     <span className="tagline">AI Assistant</span>
                 </Link>
 
+                {/* Theme Toggle Button for Mobile */}
+                <button 
+                    className="theme-toggle" 
+                    onClick={toggleDarkMode} 
+                    aria-label="Toggle dark mode"
+                >
+                    {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+                </button>
+
                 {/* Mobile Menu Toggle */}
                 <button 
                     className="menu-toggle" 
                     onClick={toggleMenu}
                     aria-label="Toggle navigation menu"
                 >
-                    {isMenuOpen ? <FaTimes size={28} /> : <FaBars size={28} />}
+                    {isMenuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
                 </button>
 
                 {/* Navigation Links and User Actions */}
@@ -92,7 +124,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                                 className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
                                 onClick={closeMenu}
                             >
-                                Home
+                                <FaHome className='nav-link-icon' style={{ marginRight: '8px' }} /> Home
                             </Link>
                         </li>
                         <li className="nav-item">
@@ -101,7 +133,7 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                                 className={`nav-link ${location.pathname === "/dashboard" ? "active" : ""}`}
                                 onClick={closeMenu}
                             >
-                                Dashboard
+                                <FaTachometerAlt className='nav-link-icon' style={{ marginRight: '8px' }} /> Dashboard
                             </Link>
                         </li>
                         <li className="nav-item">
@@ -110,15 +142,15 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                                 className={`nav-link ${location.pathname === "/about" ? "active" : ""}`}
                                 onClick={closeMenu}
                             >
-                                About
+                                <FaInfoCircle className='nav-link-icon' style={{ marginRight: '8px' }} /> About
                             </Link>
                         </li>
                     </ul>
 
                     {/* Auth Section */}
                     <div className="auth-section">
-                        {/* Dark Mode Toggle */}
-                        <button className="theme-toggle" onClick={toggleDarkMode} aria-label="Toggle dark mode">
+                        {/* Dark Mode Toggle for Desktop - Hidden on mobile */}
+                        <button className="theme-toggle desktop-only" onClick={toggleDarkMode} aria-label="Toggle dark mode">
                             {darkMode ? <FaSun size={24} /> : <FaMoon size={24} />}
                         </button>
                         

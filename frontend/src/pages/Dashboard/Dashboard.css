@@ -1,4 +1,4 @@
-/* Dashboard.css - Updated with improved response mode, welcome message, input styling and dynamic font sizing */
+/* Dashboard.css - Optimized with improved response mode layout */
 :root {
   --primary-color: #4a6fa5;
   --primary-hover: #3a5a8a;
@@ -17,20 +17,18 @@
   --font-size-medium: 40px;
   --font-size-large: 60px;
   
-  /* Response mode dynamic font sizes - small */
-  --font-size-query-small: 1.1rem;
-  --font-size-category-small: 0.7rem;
-  --font-size-response-small: 0.95rem;
+  /* Response mode dynamic font sizes */
+  --font-size-query-small: 1.25rem;
+  --font-size-category-small: 1rem;
+  --font-size-response-small: 1.25rem;
   
-  /* Response mode dynamic font sizes - medium */
-  --font-size-query-medium: 1.3rem;
-  --font-size-category-medium: 0.8rem;
-  --font-size-response-medium: 1.1rem;
+  --font-size-query-medium: 2rem;
+  --font-size-category-medium: 1.4rem;
+  --font-size-response-medium: 2rem;
   
-  /* Response mode dynamic font sizes - large */
-  --font-size-query-large: 1.5rem;
-  --font-size-category-large: 0.9rem;
-  --font-size-response-large: 1.25rem;
+  --font-size-query-large: 3rem;
+  --font-size-category-large: 2.1rem;
+  --font-size-response-large: 3rem;
 }
 
 /* Main Dashboard Container */
@@ -46,7 +44,7 @@
   padding: 0;
   margin: 0;
   overflow-y: auto;
-  position: relative; /* Added for absolute positioning of input in response mode */
+  position: relative;
 }
 
 .dashboard-inner {
@@ -56,8 +54,8 @@
   flex-direction: column;
   flex-grow: 1;
   padding: 1.5rem 1rem;
-  position: relative; /* For positioning content */
-  min-height: 70vh; /* Ensure min-height for content */
+  position: relative;
+  min-height: 70vh;
 }
 
 .dashboard.dark-mode {
@@ -71,14 +69,14 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem; /* Reduced gap to minimize extra space */
-  margin-top: 20px; /* Slightly reduced top margin */
+  gap: 1.2rem;
+  margin-top: 20px;
   transition: var(--transition);
 }
 
 /* Response Mode Layout Adjustments */
 .dashboard.response-active .main-content {
-  margin-bottom: 90px; /* Space for input box at bottom */
+  margin-bottom: 170px; /* Increased space for query input */
 }
 
 /* Enhanced Welcome Message */
@@ -89,7 +87,7 @@
   text-align: center;
   box-shadow: var(--box-shadow);
   transition: var(--transition);
-  margin-bottom: 1.2rem; /* Reduced margin */
+  margin-bottom: 1.2rem;
   border-left: 5px solid var(--primary-color);
 }
 
@@ -123,7 +121,7 @@
 
 /* Query Label */
 .query-label {
-  margin-bottom: -0.3rem; /* Reduced negative margin */
+  margin-bottom: -0.3rem;
   font-weight: 500;
   color: #4b4e51;
   text-align: center;
@@ -137,41 +135,11 @@
 /* Enhanced Query Section */
 .query-section {
   width: 100%;
-  margin-bottom: 1rem; /* Reduced bottom margin */
+  margin-bottom: 1rem;
   transition: var(--transition);
 }
 
-/* Response Mode Query Section (Fixed at Bottom) */
-.response-mode-query {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: var(--light-bg);
-  padding: 1rem;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  transition: transform 0.3s ease, opacity 0.2s ease;
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.response-mode-query.entering {
-  transform: translateY(100%);
-  opacity: 0;
-}
-
-.dark-mode .response-mode-query {
-  background-color: var(--dark-bg);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Ensure query input in response mode also respects font size */
-.response-mode-query .query-input {
-  font-size: var(--font-size-response); /* Match response text size */
-}
-
-/* Professional Query Input - Increased height */
+/* Professional Query Input */
 .query-input-container {
   position: relative;
   width: 100%;
@@ -202,10 +170,10 @@
 
 .query-input {
   flex-grow: 1;
-  padding: 1.25rem 1.5rem; /* Increased padding for taller input */
+  padding: 1.25rem 1.5rem;
   border: none;
   resize: none;
-  min-height: 80px; /* Increased height from 60px to 80px */
+  min-height: 80px;
   font-family: inherit;
   outline: none;
   background-color: transparent;
@@ -241,7 +209,8 @@
   opacity: 0.7;
 }
 
-/* Enhanced Response Mode Styles with improved spacing and alignment */
+/* ===== RESPONSE MODE STYLES ===== */
+/* Response Mode Container - Improved to prevent overflow */
 .response-mode {
   background-color: white;
   border-radius: var(--border-radius);
@@ -249,10 +218,14 @@
   box-shadow: var(--box-shadow);
   transition: var(--transition);
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-bottom: 180px; /* Increased margin to prevent overlap with fixed input */
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInUp 0.3s forwards;
+  overflow: visible; /* Ensure content doesn't get cut off */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 @keyframes fadeInUp {
@@ -267,54 +240,56 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* Response Header */
 .response-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Changed from center to allow for multi-line query */
-  margin-bottom: 1.5rem; /* Increased spacing */
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
   border-bottom: 1px solid #eee;
-  padding-bottom: 1rem; /* Increased padding */
+  padding-bottom: 1rem;
+  width: 100%;
 }
 
 .dark-mode .response-header {
   border-bottom-color: #444;
 }
 
-/* Query display in response header with improved spacing */
+/* Query display in response header */
 .query-display {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* Increased gap */
-  width: 85%; /* Control width to ensure room for close button */
+  gap: 0.5rem;
+  width: 85%;
 }
 
 .query-display h3 {
   margin: 0;
   color: var(--primary-color);
   font-weight: 600;
-  font-size: var(--font-size-query); /* Dynamic font size */
+  font-size: var(--font-size-query);
   line-height: 1.4;
-  overflow-wrap: break-word; /* Allow wrapping for long queries */
-  white-space: normal; /* Allow multiple lines */
-  overflow: visible; /* Show full content */
+  overflow-wrap: break-word;
+  white-space: normal;
+  overflow: visible;
 }
 
 .dark-mode .query-display h3 {
   color: #6a9cde;
 }
 
-/* Category badge with improved styling and dynamic font size */
+/* Category badge */
 .response-category {
-  font-size: var(--font-size-category); /* Dynamic font size */
+  font-size: var(--font-size-category);
   font-weight: 500;
   background-color: rgba(74, 111, 165, 0.1);
   color: var(--primary-color);
-  padding: 0.4rem 0.9rem; /* Increased padding */
+  padding: 0.4rem 0.9rem;
   border-radius: 12px;
   display: inline-flex;
   align-items: center;
   max-width: fit-content;
-  margin-top: 0.25rem; /* Space after query */
+  margin-top: 0.25rem;
 }
 
 .dark-mode .response-category {
@@ -322,6 +297,7 @@
   color: #6a9cde;
 }
 
+/* Close Button */
 .close-response-btn {
   background: none;
   border: none;
@@ -334,7 +310,7 @@
   justify-content: center;
   border-radius: 50%;
   transition: var(--transition);
-  margin-top: 0.25rem; /* Align with content */
+  margin-top: 0.25rem;
 }
 
 .close-response-btn:hover {
@@ -347,50 +323,121 @@
   color: #6a9cde;
 }
 
-/* Response content with improved spacing and dynamic font size */
+/* Response content container - Improved to handle overflow better */
 .response-content {
   position: relative;
   line-height: 1.6;
-  padding-top: 0.5rem; /* Space after the divider */
-  font-size: var(--font-size-response); /* Dynamic font size */
+  padding-top: 0.5rem;
+  font-size: var(--font-size-response);
+  padding-bottom: 2rem; /* Add padding for spacing before actions */
+  width: 100%;
+  overflow-wrap: break-word;
 }
 
-/* Text-to-speech button repositioned */
-.tts-btn {
-  position: absolute;
-  right: 0;
-  top: 0.5rem; /* Adjusted position */
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--primary-color);
-  font-size: 1.2rem;
-  transition: var(--transition);
+.response-content p {
+  font-size: var(--font-size-response);
+  line-height: 1.6;
+}
+
+/* Response actions container - Improved to prevent overflow */
+.response-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 50%;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  border-top: 1px solid #eee;
+  position: relative; /* Changed from sticky to relative */
+  background-color: inherit;
+  z-index: 5;
+  width: 100%;
+  flex-wrap: wrap; /* Allow buttons to wrap on narrow screens */
 }
 
-.tts-btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+.dark-mode .response-actions {
+  border-top-color: #444;
 }
 
-.dark-mode .tts-btn {
-  color: #6a9cde;
+/* Action Buttons (Translate and TTS) */
+.translate-btn, .tts-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  box-shadow: var(--box-shadow);
+  white-space: nowrap;
 }
 
-.dark-mode .tts-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+.translate-btn:hover, .tts-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Button Navigation - tightened spacing */
+.dark-mode .translate-btn, .dark-mode .tts-btn {
+  background-color: #6a9cde;
+}
+
+.dark-mode .translate-btn:hover, .dark-mode .tts-btn:hover {
+  background-color: #5a8cce;
+}
+
+/* Response Mode Query Section (Fixed at Bottom) */
+.response-mode-query {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--light-bg);
+  padding: 1rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.response-mode-query.entering {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.dark-mode .response-mode-query {
+  background-color: var(--dark-bg);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Translation section styling */
+.translated-content {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem; /* Add spacing below translations */
+  padding: 1rem;
+  background-color: rgba(74, 111, 165, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-color);
+  width: 100%;
+}
+
+.dark-mode .translated-content {
+  background-color: rgba(106, 156, 222, 0.1);
+  border-left-color: #6a9cde;
+}
+
+/* Button Navigation */
 .button-nav {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  margin: 0.75rem 0; /* Reduced margin */
+  margin: 0.75rem 0;
   flex-wrap: wrap;
 }
 
@@ -448,7 +495,7 @@
   color: #6a9cde;
 }
 
-/* Improved Popup Styles */
+/* ===== POPUP STYLES ===== */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -468,7 +515,6 @@
   to { opacity: 1; }
 }
 
-/* Improved Popup Styles (continued) */
 .popup-container {
   background-color: white;
   border-radius: var(--border-radius);
@@ -545,7 +591,7 @@
   border-color: var(--primary-color);
 }
 
-/* Font size classes that set all dynamic font sizes */
+/* Font size classes */
 .font-size-small {
   --font-size-query: var(--font-size-query-small);
   --font-size-category: var(--font-size-category-small);
@@ -553,6 +599,7 @@
   --popup-heading-size: 1.3rem;
   --popup-text-size: 0.85rem;
   --popup-button-size: 0.8rem;
+  --font-size-small: 0.9rem;
 }
 
 .font-size-medium {
@@ -562,6 +609,7 @@
   --popup-heading-size: 1.5rem;
   --popup-text-size: 0.95rem;
   --popup-button-size: 0.9rem;
+  --font-size-medium: 1.1rem;
 }
 
 .font-size-large {
@@ -571,12 +619,74 @@
   --popup-heading-size: 1.7rem;
   --popup-text-size: 1.1rem;
   --popup-button-size: 1rem;
+  --font-size-large: 1.25rem;
 }
 
-/* Enhanced Recent Highlights Popup - Improved Layout and Responsive Design */
+/* Font size fixes */
+.font-size-small .query-input {
+  font-size: 1.25rem !important;
+}
+
+.font-size-medium .query-input {
+  font-size: 2rem !important;
+}
+
+.font-size-large .query-input {
+  font-size: 3rem !important;
+}
+
+.font-size-small .query-display h3 {
+  font-size: var(--font-size-query-small) !important;
+}
+
+.font-size-medium .query-display h3 {
+  font-size: var(--font-size-query-medium) !important;
+}
+
+.font-size-large .query-display h3 {
+  font-size: var(--font-size-query-large) !important;
+}
+
+.font-size-small .response-category {
+  font-size: var(--font-size-category-small) !important;
+}
+
+.font-size-medium .response-category {
+  font-size: var(--font-size-category-medium) !important;
+}
+
+.font-size-large .response-category {
+  font-size: var(--font-size-category-large) !important;
+}
+
+.font-size-small .response-content p {
+  font-size: var(--font-size-response-small) !important;
+}
+
+.font-size-medium .response-content p {
+  font-size: var(--font-size-response-medium) !important;
+}
+
+.font-size-large .response-content p {
+  font-size: var(--font-size-response-large) !important;
+}
+
+.font-size-small .response-mode-query .query-input {
+  font-size: 1rem !important;
+}
+
+.font-size-medium .response-mode-query .query-input {
+  font-size: 2rem !important;
+}
+
+.font-size-large .response-mode-query .query-input {
+  font-size: 3rem !important;
+}
+
+/* Recent Highlights Popup */
 .popup-content.recent-highlights {
   padding: 1.5rem;
-  max-height: 80vh; /* Limit overall height */
+  max-height: 80vh;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -584,13 +694,12 @@
 
 .popup-container.recent-popup {
   width: 95%;
-  max-width: 800px; /* Increased width for better content fit */
+  max-width: 800px;
   display: flex;
   flex-direction: column;
-  max-height: 80vh; /* Constrain overall height */
+  max-height: 80vh;
 }
 
-/* Fixed header that doesn't scroll */
 .recent-highlights-header {
   display: flex;
   justify-content: space-between;
@@ -598,24 +707,23 @@
   margin-bottom: 1.25rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid #eee;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0;
 }
 
 .recent-highlights-header h2 {
   margin: 0;
-  font-size: inherit; /* Will inherit from parent font size class */
+  font-size: inherit;
 }
 
 .dark-mode .recent-highlights-header {
   border-bottom-color: #444;
 }
 
-/* Make only the list area scrollable */
 .highlights-list-container {
   overflow-y: auto;
   flex-grow: 1;
-  margin: 0 -1.5rem; /* Extend to full width of popup */
-  padding: 0 1.5rem; /* Add padding back inside the scrollable area */
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
 }
 
 .highlights-list {
@@ -636,7 +744,7 @@
   padding: 1.25rem;
   border-bottom: 1px solid #eee;
   transition: var(--transition);
-  word-break: break-word; /* Prevent text overflow */
+  word-break: break-word;
 }
 
 .highlight-item:last-child {
@@ -647,7 +755,6 @@
   border-bottom-color: #444;
 }
 
-/* Enhanced highlight items with better formatting */
 .highlight-query {
   font-weight: 600;
   margin-bottom: 0.75rem;
@@ -666,7 +773,7 @@
 .highlight-response {
   line-height: 1.5;
   color: var(--secondary-color);
-  margin: 0.5rem 0 0.75rem; /* Added bottom margin for spacing before button */
+  margin: 0.5rem 0 0.75rem;
   padding: 0.75rem;
   background-color: rgba(0, 0, 0, 0.02);
   border-radius: 6px;
@@ -679,7 +786,6 @@
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Improved highlight actions styling */
 .highlight-actions {
   display: flex;
   justify-content: flex-end;
@@ -712,7 +818,6 @@
   background-color: #5a8cce;
 }
 
-/* Fixed action button at bottom that doesn't scroll */
 .popup-actions.recent-highlights-actions {
   display: flex;
   justify-content: space-between;
@@ -720,7 +825,7 @@
   align-items: center;
   border-top: 1px solid #eee;
   padding-top: 1rem;
-  flex-shrink: 0; /* Prevent footer from shrinking */
+  flex-shrink: 0;
 }
 
 .dark-mode .popup-actions.recent-highlights-actions {
@@ -747,7 +852,6 @@
   background-color: rgba(106, 156, 222, 0.1);
 }
 
-/* No highlights state styling */
 .no-highlights {
   text-align: center;
   padding: 2rem;
@@ -852,26 +956,6 @@
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
-.view-all-link {
-  text-decoration: underline;
-  color: #007bff;
-  margin-right: 15px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.view-all-link:hover {
-  color: #0056b3;
-}
-
-.dark-mode .view-all-link {
-  color: #4da6ff;
-}
-
-.dark-mode .view-all-link:hover {
-  color: #80c1ff;
-}
-
 /* Footer */
 .footer {
   padding: 1rem 0;
@@ -883,6 +967,7 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+  /* Navigation */
   .button-nav {
     gap: 1rem;
   }
@@ -893,6 +978,7 @@
     font-size: 1.2rem;
   }
   
+  /* Welcome section */
   .welcome-message h2 {
     font-size: 1.5rem;
   }
@@ -901,9 +987,15 @@
     max-width: 95%;
   }
   
+  /* Popup styles */
   .popup-container.recent-popup {
     width: 98%;
     max-width: 600px;
+  }
+  
+  /* Query display */
+  .query-display {
+    width: 80%;
   }
   
   .query-display h3 {
@@ -911,16 +1003,37 @@
     font-size: 1rem;
   }
   
+  /* Response section */
+  .dashboard.response-active .main-content {
+    margin-bottom: 190px; /* Larger margin for mobile */
+  }
+  
+  .response-content {
+    overflow-wrap: break-word;
+    padding-bottom: 150px; /* More padding for mobile */
+  }
+  
   .response-mode {
     padding: 1.5rem;
+    margin-bottom: 170px;
   }
   
-  .query-display {
-    width: 80%;
+  .response-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
   
+  /* Buttons */
+  .translate-btn, .tts-btn {
+    flex: 1 1 auto;
+    min-width: 100px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    justify-content: center;
+  }
+  
+  /* Font size variables */
   :root {
-    /* Slightly smaller fonts on smaller screens */
     --font-size-query-small: 1rem;
     --font-size-query-medium: 1.2rem;
     --font-size-query-large: 1.4rem;
@@ -928,6 +1041,7 @@
 }
 
 @media (max-width: 600px) {
+  /* Navigation */
   .button-nav {
     display: flex;
     flex-direction: row;
@@ -944,10 +1058,12 @@
     min-width: 70px;
   }
   
+  /* Popup styles */
   .popup-container {
     width: 95%;
   }
   
+  /* Font size controls */
   .font-size-options {
     flex-direction: column;
     gap: 0.75rem;
@@ -955,6 +1071,7 @@
 }
 
 @media (max-width: 480px) {
+  /* Popup styles */
   .popup-container.recent-popup {
     width: 100%;
     height: 100vh;
@@ -970,20 +1087,44 @@
     justify-content: center;
   }
   
+  /* Query display */
+  .query-display {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
   .query-display h3 {
     max-width: 65%;
     font-size: 0.95rem;
   }
   
+  /* Response section */
+  .dashboard.response-active .main-content {
+    margin-bottom: 220px; /* Even larger margin for small screens */
+  }
+  
+  .response-content {
+    overflow-wrap: break-word;
+    padding-bottom: 180px; /* More padding for small screens */
+    max-height:fit-content;
+  }
+  
   .response-mode {
     padding: 1.25rem;
+    margin-bottom: 200px;
   }
   
   .response-header {
     flex-direction: column;
   }
   
-  .query-display {
+  /* Action buttons */
+  .response-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .translate-btn, .tts-btn {
     width: 100%;
     margin-bottom: 0.5rem;
   }
@@ -994,8 +1135,8 @@
     right: 1rem;
   }
   
+  /* Font size variables */
   :root {
-    /* Even smaller fonts on mobile */
     --font-size-query-small: 0.95rem;
     --font-size-query-medium: 1.1rem;
     --font-size-query-large: 1.3rem;

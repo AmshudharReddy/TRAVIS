@@ -1,6 +1,6 @@
-/* Navbar.css - Key Fixes */
+/* Complete Navbar.css with responsive design */
 
-/* Use the same CSS variables for consistency */
+/* CSS Variables for consistency */
 :root {
     --primary-color: #009688;
     --primary-hover: #00796B;
@@ -18,7 +18,7 @@
     --dark-input-bg: #2c2c2c;
 }
 
-/* Updated navbar styling with smoother transitions */
+/* Base Navbar Styling */
 .navbar {
     position: sticky;
     top: 0;
@@ -38,111 +38,7 @@ body.dark-mode .navbar {
     background-color: var(--dark-bg);
     color: var(--dark-text);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Logo text color for smooth transitions */
-.logo-text {
-    color: var(--primary-color);
-    transition: color 0.3s ease;
-}
-
-body.dark-mode .logo-text {
-    color: var(--primary-light);
-}
-
-/* Updated navigation links for smoother transitions */
-.nav-link {
-    color: var(--light-text);
-    transition: color 0.3s ease;
-}
-
-body.dark-mode .nav-link {
-    color: var(--dark-text);
-}
-
-.nav-link:hover {
-    color: var(--primary-color);
-}
-
-body.dark-mode .nav-link:hover {
-    color: var(--primary-light);
-}
-
-.nav-link.active {
-    color: var(--primary-color);
-}
-
-body.dark-mode .nav-link.active {
-    color: var(--primary-light);
-}
-
-.nav-link.active::after {
-    background-color: var(--primary-color);
-    transition: background-color 0.3s ease;
-}
-
-body.dark-mode .nav-link.active::after {
-    background-color: var(--primary-light);
-}
-
-/* Consistent theme toggle styling */
-.theme-toggle {
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    padding: 0.8rem;
-    border-radius: 50%;
-}
-
-body.dark-mode .theme-toggle {
-    color: var(--primary-light);
-}
-
-.theme-toggle:hover {
-    background-color: rgba(0, 150, 136, 0.1);
-}
-
-body.dark-mode .theme-toggle:hover {
-    background-color: rgba(77, 182, 172, 0.1);
-}
-
-/* Mobile menu consistency */
-@media (max-width: 768px) {
-    .nav-container {
-        background-color: var(--light-card-bg);
-        transition: background-color 0.3s ease;
-    }
-    
-    body.dark-mode .nav-container {
-        background-color: var(--dark-bg);
-    }
-}
-
-
-/* Navbar.css */
-.navbar {
-    position: sticky;
-    top: 0;
-    background-color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 0.75rem 0;
-    z-index: 1000;
-    font-family: 'Lexend', sans-serif;
-    transition: all 0.3s ease;
-    height: 15vh; /* Set navbar height to 15% viewport height */
-    display: flex;
-    align-items: center;
-}
-
-.navbar.dark-mode {
-    background-color: #1a1a1a;
-    color: #f8f9fa;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .navbar-container {
@@ -168,14 +64,14 @@ body.dark-mode .theme-toggle:hover {
 .logo-text {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #009688; /* Using consistent teal color */
+    color: var(--primary-color);
     letter-spacing: 1px;
     font-family: 'Bruno Ace SC', sans-serif;
     transition: color 0.3s ease;
 }
 
 .dark-mode .logo-text {
-    color: #4DB6AC; /* Lighter teal for dark mode */
+    color: var(--primary-light);
 }
 
 .tagline {
@@ -189,12 +85,12 @@ body.dark-mode .theme-toggle:hover {
     color: #adb5bd;
 }
 
-/* Navigation Menu Toggle */
+/* Navigation Menu Toggle - Hidden on desktop */
 .menu-toggle {
     display: none;
     background: none;
     border: none;
-    color: #009688;
+    color: var(--primary-color);
     cursor: pointer;
     padding: 0.5rem;
     font-size: 1.5rem;
@@ -202,7 +98,7 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .dark-mode .menu-toggle {
-    color: #4DB6AC;
+    color: var(--primary-light);
 }
 
 /* Navigation Container */
@@ -229,7 +125,7 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .nav-link {
-    color: #424242;
+    color: var(--light-text);
     text-decoration: none;
     font-size: 1.25rem;
     font-weight: 500;
@@ -239,11 +135,11 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .nav-link:hover {
-    color: #009688;
+    color: var(--primary-color);
 }
 
 .nav-link.active {
-    color: #009688;
+    color: var(--primary-color);
     font-weight: 600;
 }
 
@@ -254,28 +150,28 @@ body.dark-mode .theme-toggle:hover {
     left: 0;
     width: 100%;
     height: 3px;
-    background-color: #009688;
+    background-color: var(--primary-color);
     transition: background-color 0.3s ease;
 }
 
-/* Dark Mode Styles */
+/* Dark Mode Styles for navigation links */
 .dark-mode .nav-link {
-    color: #e0e0e0;
+    color: var(--dark-text);
 }
 
 .dark-mode .nav-link:hover {
-    color: #4DB6AC;
+    color: var(--primary-light);
 }
 
 .dark-mode .nav-link.active {
-    color: #4DB6AC;
+    color: var(--primary-light);
 }
 
 .dark-mode .nav-link.active::after {
-    background-color: #4DB6AC;
+    background-color: var(--primary-light);
 }
 
-/* Additional hover effect for more interactivity */
+/* Hover effect for links */
 .nav-link::before {
     content: "";
     position: absolute;
@@ -283,7 +179,7 @@ body.dark-mode .theme-toggle:hover {
     left: 0;
     width: 0;
     height: 3px;
-    background-color: #009688;
+    background-color: var(--primary-color);
     transition: width 0.3s ease;
 }
 
@@ -292,7 +188,7 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .dark-mode .nav-link::before {
-    background-color: #4DB6AC;
+    background-color: var(--primary-light);
 }
 
 /* Authentication Section */
@@ -304,11 +200,16 @@ body.dark-mode .theme-toggle:hover {
     flex: 0 0 auto;
 }
 
+/* Hide on desktop screens & non-smaller screens */
+@media (min-width: 769px) {
+
+}
+
 /* Theme Toggle */
 .theme-toggle {
     background: none;
     border: none;
-    color: #009688;
+    color: var(--primary-color);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -319,7 +220,7 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .dark-mode .theme-toggle {
-    color: #4DB6AC;
+    color: var(--primary-light);
 }
 
 .theme-toggle:hover {
@@ -337,6 +238,7 @@ body.dark-mode .theme-toggle:hover {
     height: 1.5rem;
 }
 
+/* User Section */
 .user-section {
     display: flex;
     align-items: center;
@@ -348,24 +250,24 @@ body.dark-mode .theme-toggle:hover {
     align-items: center;
     gap: 0.8rem;
     text-decoration: none;
-    color: #424242;
+    color: var(--light-text);
     transition: color 0.3s ease;
 }
 
 .dark-mode .profile-link {
-    color: #e0e0e0;
+    color: var(--dark-text);
 }
 
 .profile-link:hover {
-    color: #009688;
+    color: var(--primary-color);
 }
 
 .dark-mode .profile-link:hover {
-    color: #4DB6AC;
+    color: var(--primary-light);
 }
 
 .user-icon {
-    color: #009688;
+    color: var(--primary-color);
     transition: transform 0.3s ease;
     font-size: 2rem;
     width: 2rem;
@@ -373,7 +275,7 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .dark-mode .user-icon {
-    color: #4DB6AC;
+    color: var(--primary-light);
 }
 
 .profile-link:hover .user-icon {
@@ -385,6 +287,7 @@ body.dark-mode .theme-toggle:hover {
     font-weight: 500;
 }
 
+/* Auth Buttons */
 .auth-buttons {
     display: flex;
     gap: 1.5rem;
@@ -392,8 +295,8 @@ body.dark-mode .theme-toggle:hover {
 
 .login-button {
     background-color: transparent;
-    color: #009688;
-    border: 1px solid #009688;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
     border-radius: 4px;
     padding: 0.75rem 1.75rem;
     font-size: 1rem;
@@ -403,8 +306,8 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .dark-mode .login-button {
-    color: #4DB6AC;
-    border: 1px solid #4DB6AC;
+    color: var(--primary-light);
+    border: 1px solid var(--primary-light);
 }
 
 .login-button:hover {
@@ -416,7 +319,7 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .signup-button {
-    background-color: #009688;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 4px;
@@ -428,12 +331,12 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .dark-mode .signup-button {
-    background-color: #4DB6AC;
+    background-color: var(--primary-light);
     color: #212529;
 }
 
 .signup-button:hover {
-    background-color: #00796B;
+    background-color: var(--primary-hover);
 }
 
 .dark-mode .signup-button:hover {
@@ -442,7 +345,7 @@ body.dark-mode .theme-toggle:hover {
 
 .logout-button {
     background-color: #f5f5f5;
-    color: #424242;
+    color: var(--light-text);
     border: none;
     border-radius: 4px;
     padding: 0.75rem 1.75rem;
@@ -453,8 +356,8 @@ body.dark-mode .theme-toggle:hover {
 }
 
 .dark-mode .logout-button {
-    background-color: #333333;
-    color: #e0e0e0;
+    background-color: var(--dark-border);
+    color: var(--dark-text);
 }
 
 .logout-button:hover {
@@ -469,12 +372,30 @@ body.dark-mode .theme-toggle:hover {
 
 /* Apply dark mode to body */
 body.dark-mode {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Responsive Design */
+/* Desktop/Mobile toggle visibility */
+@media (min-width: 769px) {
+    .theme-toggle.desktop-only {
+        display: flex;
+    }
+    .theme-toggle {
+        display: none;
+    }
+    /* .theme-toggle svg{
+        display: none;
+    } */
+    .nav-link-icon{
+        display: none;
+    }
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Large screens adjustments */
 @media (max-width: 1024px) {
     .nav-link {
         font-size: 1.125rem;
@@ -485,66 +406,196 @@ body.dark-mode {
     }
 }
 
+/* Tablet and Mobile: Base responsive styles */
 @media (max-width: 768px) {
     .navbar {
         height: auto;
         min-height: 70px;
-        padding: 1rem 0;
+        padding: 0.75rem 1rem;
     }
     
+    .navbar-container {
+        width: 100%;
+    }
+    
+    /* Show menu toggle on mobile */
     .menu-toggle {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        transition: background-color 0.3s ease;
     }
     
+    .menu-toggle:hover {
+        background-color: rgba(0, 150, 136, 0.1);
+    }
+    
+    .dark-mode .menu-toggle:hover {
+        background-color: rgba(77, 182, 172, 0.1);
+    }
+    
+    /* Navigation container for mobile */
     .nav-container {
         display: none;
-        flex-direction: column;
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
         background-color: white;
-        padding: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         z-index: 1000;
+        border-radius: 0 0 12px 12px;
+        transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        animation: slideDown 0.3s ease-in-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .dark-mode .nav-container {
-        background-color: #1a1a1a;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        background-color: var(--dark-card-bg);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
     
     .nav-container.active {
         display: flex;
+        flex-direction: column;
     }
     
+    /* Vertical navigation links */
     .nav-links {
         flex-direction: column;
         width: 100%;
-        margin-bottom: 1rem;
-        gap: 1rem;
+        margin-bottom: 1.5rem;
+        gap: 0;
     }
     
     .nav-item {
-        margin: 0.5rem 0;
+        margin: 0;
+        width: 100%;
     }
     
+    .nav-item:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .dark-mode .nav-item:not(:last-child) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0.5rem;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        font-size: 1.1rem;
+    }
+    
+    .nav-link:hover {
+        background-color: rgba(0, 150, 136, 0.08);
+    }
+    
+    .dark-mode .nav-link:hover {
+        background-color: rgba(77, 182, 172, 0.08);
+    }
+    
+    .nav-link.active {
+        background-color: rgba(0, 150, 136, 0.12);
+    }
+    
+    .dark-mode .nav-link.active {
+        background-color: rgba(77, 182, 172, 0.12);
+    }
+    
+    /* Remove underline from active links on mobile */
+    .nav-link.active::after {
+        display: none;
+    }
+    
+    .nav-link::before {
+        display: none;
+    }
+    
+    /* Mobile auth section styling */
     .auth-section {
-        margin-left: 0;
         width: 100%;
+        border-top: 1px solid var(--light-border);
+        padding-top: 1.5rem;
+        margin-top: 0.5rem;
         flex-direction: column;
         align-items: flex-start;
     }
     
-    .theme-toggle {
-        margin-bottom: 1rem;
+    .dark-mode .auth-section {
+        border-top: 1px solid var(--dark-border);
     }
     
-    .user-section, 
+    /* Position the mobile theme toggle */
+    .theme-toggle {
+        position: absolute;
+        top: 0.75rem;
+        right: 5rem;
+    }
+    
+    .theme-toggle.desktop-only {
+        display: none;
+    }
+    
+    /* Mobile user section */
+    .user-section {
+        flex-direction: column;
+        width: 100%;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .profile-link {
+        width: 100%;
+        padding: 0.75rem 0.5rem;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+        background-color: rgba(0, 150, 136, 0.05);
+    }
+    
+    .dark-mode .profile-link {
+        background-color: rgba(77, 182, 172, 0.05);
+    }
+    
+    .profile-link:hover {
+        background-color: rgba(0, 150, 136, 0.08);
+    }
+    
+    .dark-mode .profile-link:hover {
+        background-color: rgba(77, 182, 172, 0.08);
+    }
+    
+    .user-icon {
+        font-size: 1.6rem;
+        margin-right: 0.75rem;
+    }
+    
+    .user-name {
+        font-weight: 600;
+    }
+    
+    /* Mobile auth buttons */
     .auth-buttons {
         flex-direction: column;
         width: 100%;
-        gap: 0.75rem;
+        gap: 1rem;
     }
     
     .login-button, 
@@ -552,5 +603,210 @@ body.dark-mode {
     .logout-button {
         width: 100%;
         text-align: center;
+        display: block;
+        padding: 0.875rem;
+        border-radius: 6px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    /* Improved logout button styling */
+    .logout-button {
+        background-color: #f5f5f5;
+        color: var(--light-text);
+    }
+    
+    .dark-mode .logout-button {
+        background-color: var(--dark-border);
+        color: var(--dark-text);
+    }
+    
+    .logout-button:hover {
+        background-color: #ffebee; /* Subtle red hint on hover */
+        color: #d32f2f;
+    }
+    
+    .dark-mode .logout-button:hover {
+        background-color: rgba(211, 47, 47, 0.2);
+        color: #ef9a9a;
+    }
+    
+    /* Touch feedback on mobile */
+    .nav-link:active,
+    .profile-link:active,
+    .logout-button:active,
+    .login-button:active,
+    .signup-button:active {
+        transform: scale(0.98);
+    }
+    
+    /* Create a smooth overlay effect when menu is open */
+    body:has(.nav-container.active) {
+        position: relative;
+    }
+    
+    body:has(.nav-container.active)::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        animation: fadeIn 0.3s ease-in-out;
+        pointer-events: none;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* Scrollbar for tall mobile menus */
+    @media (max-height: 600px) {
+        .nav-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) transparent;
+        }
+        
+        .nav-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .nav-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .nav-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .dark-mode .nav-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-light);
+        }
+    }
+}
+
+/* Tablet-specific adjustments */
+@media (min-width: 481px) and (max-width: 768px) {
+    .navbar-container {
+        padding: 0 1rem;
+    }
+    
+    .logo-text {
+        font-size: 2rem;
+    }
+    
+    .tagline {
+        font-size: 0.85rem;
+    }
+    
+    .nav-container {
+        padding: 1.25rem;
+        max-width: 400px;
+        margin-left: auto;
+        border-radius: 0 0 0 12px;
+    }
+    
+    .nav-link {
+        font-size: 1rem;
+    }
+}
+
+/* Medium-sized devices */
+@media (max-width: 600px) {
+    .navbar-container {
+        width: 100%;
+        padding: 0 1rem;
+    }
+    
+    .logo-text {
+        font-size: 2rem;
+    }
+    
+    .tagline {
+        font-size: 0.85rem;
+    }
+    
+    .nav-container {
+        padding: 1.25rem;
+    }
+    
+    .nav-link {
+        font-size: 1rem;
+    }
+    
+    .theme-toggle {
+        right: 4.5rem;
+        padding: 0.7rem;
+    }
+    
+    .theme-toggle svg {
+        width: 1.3rem;
+        height: 1.3rem;
+    }
+}
+
+/* Small phone adjustments */
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 1.75rem;
+    }
+    
+    .tagline {
+        font-size: 0.75rem;
+    }
+    
+    .theme-toggle {
+        right: 4rem;
+        width: 36px;
+        height: 36px;
+        padding: 0.6rem;
+    }
+    
+    .theme-toggle svg {
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+    
+    .menu-toggle {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .menu-toggle svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .nav-container {
+        padding: 1rem;
+    }
+    
+    .nav-link {
+        padding: 0.7rem 0.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .login-button, 
+    .signup-button, 
+    .logout-button {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    .user-name {
+        font-size: 0.95rem;
+    }
+    
+    .user-icon {
+        font-size: 1.4rem;
     }
 }
