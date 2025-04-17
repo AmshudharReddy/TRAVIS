@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaUserCircle, FaBars, FaTimes, FaSun, FaMoon, FaHome, FaTachometerAlt, FaInfoCircle, FaUser } from "react-icons/fa";
+import { FaUserCircle, FaBars, FaTimes, FaSun, FaMoon, FaHome, FaTachometerAlt, FaInfoCircle,  } from "react-icons/fa";
 import './Navbar.css';
 import axios from 'axios';
 
