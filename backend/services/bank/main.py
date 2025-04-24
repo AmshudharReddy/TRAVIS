@@ -6,7 +6,7 @@ import numpy as np
 from flask import Flask, request, jsonify
 
 # Load model config and vocab
-with open('model_artifacts/vocabulary.json') as f:
+with open('model_artifacts/vocabulary2.json') as f:
     vocab = json.load(f)
 
 inv_vocab = {v: k for k, v in vocab.items()}
@@ -62,7 +62,7 @@ class TransformerQA(nn.Module):
 
 # Load trained model
 model = TransformerQA(vocab_size).to(device)
-model.load_state_dict(torch.load('model_artifacts/transformer_qa_final.pth', map_location=device))
+model.load_state_dict(torch.load('model_artifacts/transformer_qa_final2.pth', map_location=device))
 model.eval()
 
 # Generate response function
