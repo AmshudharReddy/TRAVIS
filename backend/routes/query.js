@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const fetchuser = require("../middleware/fetchuser"); // Middleware for authentication
-const { handleQuery, handleTranslate, getQueryHistory } = require("../controllers/queryController");
+const { handleQuery, handleTranslate, getQueryHistory , handleTelugu} = require("../controllers/queryController");
 
 // Handle user query and store in DB
 router.post("/", fetchuser, handleQuery);
@@ -12,4 +12,5 @@ router.post("/translate", fetchuser, handleTranslate);
 // Fetch query history for the authenticated user
 router.get("/history", fetchuser, getQueryHistory);
 
+router.post('/tts', handleTelugu);
 module.exports = router;
