@@ -1,6 +1,7 @@
 const { processQuery } = require("../services/queryProcessor");
 const QueryHistory = require("../models/QueryHistory");
 const { translateResponse } = require("../services/translatorProcessor");
+const axios = require("axios");
 
 // Controller for processing user queries
 const handleQuery = async (req, res) => {
@@ -55,4 +56,18 @@ const getQueryHistory = async (req, res) => {
     }
 };
 
-module.exports = { handleQuery, handleTranslate, getQueryHistory };
+const handleTelugu = async (req,res) => {
+    try{
+        const response = await axios.post(
+            'http://127.0.0.1:5003/tts',
+            {text: req.body.text},
+            {responseType: 'stream'}
+        );
+        res.setHeader('Content-Type', 'audio/mpeg');
+        response.data.pipe(res);
+    }catch (err){
+        res.status(500).send('Error generating speech');
+    }
+}
+
+module.exports = { handleQuery, handleTranslate, getQueryHistory, handleTelugu };

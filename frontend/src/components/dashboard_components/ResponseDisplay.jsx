@@ -36,7 +36,25 @@ const ResponseDisplay = ({
         
         <div className="response-actions">
           <button 
-            onClick={() => speak(response)} 
+            onClick={async () => {
+              try {
+                const res = await fetch("http://localhost:5000/api/query/tts", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ text: translatedResponse || response })
+                });
+            
+                if (!res.ok) throw new Error("TTS failed");
+            
+                const audioBlob = await res.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+              } catch (err) {
+                console.error("Error playing TTS:", err);
+              }
+            }}
+             
             className="tts-btn" 
             title="Listen to response"
           >
