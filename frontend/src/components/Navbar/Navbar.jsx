@@ -171,14 +171,14 @@ const Navbar = ({ darkMode, setDarkMode }) => {
                             <div className="auth-buttons">
                                 <Link
                                     to="/login"
-                                    className="login-button"
+                                    className="login-page-button"
                                     onClick={closeMenu}
                                 >
                                     Login
                                 </Link>
                                 <Link
                                     to="/signup"
-                                    className="signup-button"
+                                    className="signup-page-button"
                                     onClick={closeMenu}
                                 >
                                     Sign Up

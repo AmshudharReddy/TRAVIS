@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import About from './pages/About/About';
 import QueryHistory from './pages/QueryHistory/QueryHistory';
 import UserProfile from './pages/UserProflie/UserProfile';
+import CustomerManagement from './pages/customer_manager/CustomerManagement';
 
 function App() {
   const location = useLocation();
@@ -87,6 +88,11 @@ function App() {
           <Route exact path="/profile" element={
             <ProtectedRoute>
               <UserProfile showAlert={showAlert} darkMode={darkMode} />
+            </ProtectedRoute>
+          } />
+          <Route exact path="/dashboard/customer" element={
+            <ProtectedRoute>
+              <CustomerManagement showAlert={showAlert} darkMode={darkMode} />
             </ProtectedRoute>
           } />
         </Routes>

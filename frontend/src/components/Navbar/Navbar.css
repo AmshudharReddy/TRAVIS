@@ -293,7 +293,7 @@ body.dark-mode .navbar {
     gap: 1.5rem;
 }
 
-.login-button {
+.login-page-button {
     background-color: transparent;
     color: var(--primary-color);
     border: 1px solid var(--primary-color);
@@ -305,20 +305,20 @@ body.dark-mode .navbar {
     transition: all 0.3s ease;
 }
 
-.dark-mode .login-button {
+.dark-mode .login-page-button {
     color: var(--primary-light);
     border: 1px solid var(--primary-light);
 }
 
-.login-button:hover {
+.login-page-button:hover {
     background-color: rgba(0, 150, 136, 0.1);
 }
 
-.dark-mode .login-button:hover {
+.dark-mode .login-page-button:hover {
     background-color: rgba(77, 182, 172, 0.1);
 }
 
-.signup-button {
+.signup-page-button {
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -330,16 +330,16 @@ body.dark-mode .navbar {
     transition: all 0.3s ease;
 }
 
-.dark-mode .signup-button {
+.dark-mode .signup-page-button {
     background-color: var(--primary-light);
     color: #212529;
 }
 
-.signup-button:hover {
+.signup-page-button:hover {
     background-color: var(--primary-hover);
 }
 
-.dark-mode .signup-button:hover {
+.dark-mode .signup-page-button:hover {
     background-color: #26A69A;
 }
 
@@ -598,8 +598,8 @@ body.dark-mode {
         gap: 1rem;
     }
     
-    .login-button, 
-    .signup-button, 
+    .login-page-button, 
+    .signup-page-button, 
     .logout-button {
         width: 100%;
         text-align: center;
@@ -638,8 +638,8 @@ body.dark-mode {
     .nav-link:active,
     .profile-link:active,
     .logout-button:active,
-    .login-button:active,
-    .signup-button:active {
+    .login-page-button:active,
+    .signup-page-button:active {
         transform: scale(0.98);
     }
     
@@ -795,8 +795,8 @@ body.dark-mode {
         font-size: 0.95rem;
     }
     
-    .login-button, 
-    .signup-button, 
+    .login-page-button, 
+    .signup-page-button, 
     .logout-button {
         padding: 0.75rem;
         font-size: 0.95rem;
