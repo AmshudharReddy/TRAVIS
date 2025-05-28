@@ -1,68 +1,205 @@
-import React from 'react';
-import { Container, Card, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import './Home.css';
+"use client"
+
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowRight, FaLightbulb, FaAccessibleIcon, FaRobot, FaLanguage, FaHeadset } from "react-icons/fa";
+import "./Home.css";
 
 const Home = ({ darkMode }) => {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [animateHero, setAnimateHero] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const authToken = sessionStorage.getItem("auth-token")
+    setIsLoggedIn(!!authToken)
+
+    // Trigger animation after component mounts
+    setTimeout(() => {
+      setAnimateHero(true);
+    }, 100)
+  }, [])
 
   const handleGetStarted = () => {
-    const authToken = sessionStorage.getItem('auth-token');
-    if(!authToken){
-      navigate('/login');
-    } else{
-      navigate('/dashboard');
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    } else {
+      navigate("/login");
     }
-    
-  };
+  }
 
   return (
-    <div className={`home-container ${darkMode ? 'dark-mode' : ''}`}>
-      <Container 
-        className="d-flex align-items-center justify-content-center"
-        style={{ height: '100vh', padding: 0, margin: 0, maxWidth: '100%' }}
-      >
-        <Card 
-          className={`text-center p-5 shadow-lg ${darkMode ? 'dark-card' : ''}`}
-          style={{ 
-            maxWidth: '800px',
-            backgroundColor: darkMode ? '#1e1e1e' : 'white'
-          }}
-        >
-          <Card.Body>
-            <Card.Title style={{ color: darkMode ? '#f8f9fa' : 'inherit' }}>Hello! I am</Card.Title>
-            <Card.Header
-              className={darkMode ? 'dark-header' : ''}
-              style={{
-                fontSize: '45px',
-                fontFamily: 'monospace',
-                fontWeight: 'bold',
-                border: '40px',
-                margin: '20px',
-                backgroundColor: darkMode ? '#222' : 'whitesmoke',
-                color: darkMode ? '#4ecca3' : 'teal'
-              }}
-            >
-              TRAVIS:
-              <h4>Transfomer-based Assistant for Visually Impaired Service agents</h4>
-            </Card.Header>
-            <Button
-              variant={darkMode ? "outline-info" : "primary"}
-              className={`mt-3 ${darkMode ? 'dark-button' : ''}`}
-              style={{ 
-                backgroundColor: darkMode ? 'transparent' : 'teal',
-                borderColor: darkMode ? '#4ecca3' : 'teal',
-                color: darkMode ? '#4ecca3' : 'white'
-              }}
-              onClick={handleGetStarted}
-            >
-              Get Started
-            </Button>
-          </Card.Body>
-        </Card>
-      </Container>
+    <div className={`home-container ${darkMode ? "dark-mode" : ""}`}>
+      {/* Hero Section */}
+      <section className={`hero-section ${animateHero ? "animate" : ""}`}>
+        <div className="hero-content">
+          <h1 className="hero-title">
+            <span className="hero-title-prefix">Meet</span>
+            <span className="hero-title-main">TRAVIS</span>
+          </h1>
+          <h2 className="hero-subtitle">Transformer-based Assistant for Visually Impaired Service Agents</h2>
+          <p className="hero-description">
+            Empowering visually impaired bank representatives with AI-driven assistance to provide exceptional customer
+            service
+          </p>
+          <div className="hero-buttons">
+            <button className="primary-button" onClick={handleGetStarted}>
+              {isLoggedIn ? "Go to Dashboard" : "Get Started"} <FaArrowRight className="button-icon" />
+            </button>
+            <button className="secondary-button" onClick={() => navigate("/about")}>
+              Learn More
+            </button>
+          </div>
+        </div>
+        <div className="hero-image">
+          <div className="hero-image-container">
+            <div className="hero-image-circle"></div>
+            <div className="hero-image-dots"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="features-section">
+        <h2 className="section-title">Key Features</h2>
+        <div className="features-grid">
+          <div className="feature-card">
+            <div className="feature-icon">
+              <FaRobot />
+            </div>
+            <h3 className="feature-title">AI-Powered Assistance</h3>
+            <p className="feature-description">
+              Advanced transformer-based AI system that processes customer queries with high accuracy
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-icon">
+              <FaAccessibleIcon />
+            </div>
+            <h3 className="feature-title">Accessibility Focused</h3>
+            <p className="feature-description">
+              Designed specifically for visually impaired bank representatives to navigate with ease
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-icon">
+              <FaLanguage />
+            </div>
+            <h3 className="feature-title">Multilingual Support</h3>
+            <p className="feature-description">
+              Translates responses into local languages to better serve diverse customer bases
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-icon">
+              <FaHeadset />
+            </div>
+            <h3 className="feature-title">Voice Assistance</h3>
+            <p className="feature-description">
+              Converts text responses to speech for seamless communication with customers
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="how-it-works-section">
+        <h2 className="section-title">How It Works</h2>
+        <div className="steps-container">
+          <div className="step">
+            <div className="step-number">1</div>
+            <h3 className="step-title">Query Processing</h3>
+            <p className="step-description">Customer queries are processed by our transformer-based AI system</p>
+          </div>
+          <div className="step-connector"></div>
+          <div className="step">
+            <div className="step-number">2</div>
+            <h3 className="step-title">Classification</h3>
+            <p className="step-description">Queries are categorized into standardized formats for accurate responses</p>
+          </div>
+          <div className="step-connector"></div>
+          <div className="step">
+            <div className="step-number">3</div>
+            <h3 className="step-title">Translation</h3>
+            <p className="step-description">Responses are translated into the preferred language when needed</p>
+          </div>
+          <div className="step-connector"></div>
+          <div className="step">
+            <div className="step-number">4</div>
+            <h3 className="step-title">Voice Conversion</h3>
+            <p className="step-description">
+              Text is converted to speech for the representative to communicate with customers
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="benefits-section">
+        <div className="benefits-content">
+          <h2 className="section-title">Why Choose TRAVIS?</h2>
+          <ul className="benefits-list">
+            <li className="benefit-item">
+              <FaLightbulb className="benefit-icon" />
+              <div>
+                <h3 className="benefit-title">Enhanced Productivity</h3>
+                <p className="benefit-description">
+                  Enables visually impaired agents to handle customer queries efficiently
+                </p>
+              </div>
+            </li>
+            <li className="benefit-item">
+              <FaLightbulb className="benefit-icon" />
+              <div>
+                <h3 className="benefit-title">Improved Accuracy</h3>
+                <p className="benefit-description">
+                  Reduces errors in customer interactions with AI-powered assistance
+                </p>
+              </div>
+            </li>
+            <li className="benefit-item">
+              <FaLightbulb className="benefit-icon" />
+              <div>
+                <h3 className="benefit-title">Inclusive Workplace</h3>
+                <p className="benefit-description">
+                  Creates opportunities for visually impaired individuals in customer service
+                </p>
+              </div>
+            </li>
+            <li className="benefit-item">
+              <FaLightbulb className="benefit-icon" />
+              <div>
+                <h3 className="benefit-title">Customer Satisfaction</h3>
+                <p className="benefit-description">
+                  Delivers prompt and accurate responses to enhance customer experience
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div className="benefits-image">
+          <div className="benefits-image-container"></div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="cta-section">
+        <div className="cta-content">
+          <h2 className="cta-title">Ready to Transform Customer Service?</h2>
+          <p className="cta-description">
+            Join us in empowering visually impaired service agents with cutting-edge AI technology
+          </p>
+          <button className="primary-button cta-button" onClick={handleGetStarted}>
+            {isLoggedIn ? "Access Dashboard" : "Get Started Now"} <FaArrowRight className="button-icon" />
+          </button>
+        </div>
+      </section>
     </div>
-  );
-};
+  )
+}
 
 export default Home;

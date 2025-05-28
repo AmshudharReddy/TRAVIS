@@ -1,242 +1,331 @@
+from flask import Flask, request, jsonify
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
 from torchtext.data.utils import get_tokenizer
-from flask import Flask, request, jsonify
-
-# Define the Embeddings class
-class Embeddings(nn.Module):
-    def __init__(self, vocab_size: int, d_model: int):
-        super().__init__()
-        self.lut = nn.Embedding(vocab_size, d_model)
-        self.d_model = d_model
-
-    def forward(self, x):
-        return self.lut(x) * math.sqrt(self.d_model)
-
-# Define the PositionalEncoding class
-class PositionalEncoding(nn.Module):
-    def __init__(self, d_model: int, dropout: float = 0.1, max_length: int = 5000):
-        super().__init__()
-        self.dropout = nn.Dropout(p=dropout)
-        pe = torch.zeros(max_length, d_model)
-        for k in range(max_length):
-            for i in range(d_model // 2):
-                theta = k / (10000 ** ((2 * i) / d_model))
-                pe[k, 2 * i] = math.sin(theta)
-                pe[k, 2 * i + 1] = math.cos(theta)
-        # pe = pe.unsqueeze(0)  # Add batch dimension: [1, max_length, d_model]
-        self.register_buffer("pe", pe)  # Register the tensor as a buffer
-        # Shape: [1, max_length, d_model] for broadcasting
-
-    def forward(self, x):
-        x = x + self.pe[:x.size(1), :].unsqueeze(0)  # Shape: [1, seq_len, d_model]
-        return self.dropout(x)
-
-# Define the MultiHeadAttention class
-class MultiHeadAttention(nn.Module):
-    def __init__(self, d_model, n_heads, dropout: float = 0.1):
-        super().__init__()
-        self.d_model = d_model
-        self.n_heads = n_heads
-        self.d_key = d_model // n_heads
-        self.Wq = nn.Linear(d_model, d_model)
-        self.Wk = nn.Linear(d_model, d_model)
-        self.Wv = nn.Linear(d_model, d_model)
-        self.Wo = nn.Linear(d_model, d_model)
-        self.dropout = nn.Dropout(p=dropout)
-
-    def forward(self, query, key, value, mask=None):
-        batch_size = query.shape[0]
-        Q = self.Wq(query)
-        K = self.Wk(key)
-        V = self.Wv(value)
-        Q = Q.view(batch_size, -1, self.n_heads, self.d_key).permute(0, 2, 1, 3)
-        K = K.view(batch_size, -1, self.n_heads, self.d_key).permute(0, 2, 1, 3)
-        V = V.view(batch_size, -1, self.n_heads, self.d_key).permute(0, 2, 1, 3)
-        scaled_dot_prod = torch.matmul(Q, K.permute(0, 1, 3, 2)) / math.sqrt(self.d_key)
-        if mask is not None:
-            scaled_dot_prod = scaled_dot_prod.masked_fill(mask == 0, -1e10)
-        attn_probs = torch.softmax(scaled_dot_prod, dim=-1)
-        A = torch.matmul(self.dropout(attn_probs), V)
-        A = A.permute(0, 2, 1, 3).contiguous()
-        A = A.view(batch_size, -1, self.n_heads * self.d_key)
-        output = self.Wo(A)
-        return output, attn_probs
-
-# Define the PositionwiseFeedForward class
-class PositionwiseFeedForward(nn.Module):
-    def __init__(self, d_model: int, d_ffn: int, dropout: float = 0.1):
-        super().__init__()
-        self.linear_layer_1 = nn.Linear(d_model, d_ffn)
-        self.linear_layer_2 = nn.Linear(d_ffn, d_model)
-        self.dropout = nn.Dropout(p=dropout)
-
-    def forward(self, x):
-        return self.linear_layer_2(self.dropout(F.relu(self.linear_layer_1(x))))
-
-# Define the EncoderLayer class
-class EncoderLayer(nn.Module):
-    def __init__(self, d_model: int, n_heads: int, d_ffn: int, dropout: float):
-        super().__init__()
-        self.attention = MultiHeadAttention(d_model, n_heads, dropout)
-        self.attn_layer_norm = nn.LayerNorm(d_model)
-        self.positionwise_fnn = PositionwiseFeedForward(d_model, d_ffn, dropout)
-        self.fnn_layer_norm = nn.LayerNorm(d_model)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, src, src_mask):
-        _src, attn_probs = self.attention(src, src, src, src_mask)
-        src = self.attn_layer_norm(src + self.dropout(_src))
-        _src = self.positionwise_fnn(src)
-        src = self.fnn_layer_norm(src + self.dropout(_src))
-        return src, attn_probs
-
-# Define the Encoder class
-class Encoder(nn.Module):
-    def __init__(self, d_model: int, n_layers: int, n_heads: int, d_ffn: int, dropout: float = 0.1):
-        super().__init__()
-        self.layers = nn.ModuleList([EncoderLayer(d_model, n_heads, d_ffn, dropout) for _ in range(n_layers)])
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, src, src_mask):
-        for layer in self.layers:
-            src, _ = layer(src, src_mask)
-        return src
-
-# Define the DecoderLayer class
-class DecoderLayer(nn.Module):
-    def __init__(self, d_model: int, n_heads: int, d_ffn: int, dropout: float):
-        super().__init__()
-        self.masked_attention = MultiHeadAttention(d_model, n_heads, dropout)
-        self.masked_attn_layer_norm = nn.LayerNorm(d_model)
-        self.attention = MultiHeadAttention(d_model, n_heads, dropout)
-        self.attn_layer_norm = nn.LayerNorm(d_model)
-        self.positionwise_fnn = PositionwiseFeedForward(d_model, d_ffn, dropout)
-        self.fnn_layer_norm = nn.LayerNorm(d_model)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, trg, src, trg_mask, src_mask):
-        _trg, _ = self.masked_attention(trg, trg, trg, trg_mask)
-        trg = self.masked_attn_layer_norm(trg + self.dropout(_trg))
-        _trg, attn_probs = self.attention(trg, src, src, src_mask)
-        trg = self.attn_layer_norm(trg + self.dropout(_trg))
-        _trg = self.positionwise_fnn(trg)
-        trg = self.fnn_layer_norm(trg + self.dropout(_trg))
-        return trg, attn_probs
-
-# Define the Decoder class
-class Decoder(nn.Module):
-    def __init__(self, vocab_size: int, d_model: int, n_layers: int, n_heads: int, d_ffn: int, dropout: float = 0.1):
-        super().__init__()
-        self.layers = nn.ModuleList([DecoderLayer(d_model, n_heads, d_ffn, dropout) for _ in range(n_layers)])
-        self.dropout = nn.Dropout(dropout)
-        self.Wo = nn.Linear(d_model, vocab_size)
-
-    def forward(self, trg, src, trg_mask, src_mask):
-        for layer in self.layers:
-            trg, _ = layer(trg, src, trg_mask, src_mask)
-        return self.Wo(trg)
-
-# Define the Transformer class
-class Transformer(nn.Module):
-    def __init__(self, encoder: Encoder, decoder: Decoder, src_embed: nn.Module, trg_embed: nn.Module, src_pad_idx: int, trg_pad_idx: int, device):
-        super().__init__()
-        self.encoder = encoder
-        self.decoder = decoder
-        self.src_embed = src_embed
-        self.trg_embed = trg_embed
-        self.src_pad_idx = src_pad_idx
-        self.trg_pad_idx = trg_pad_idx
-        self.device = device
-
-    def make_src_mask(self, src):
-        src_mask = (src != self.src_pad_idx).unsqueeze(1).unsqueeze(2)
-        return src_mask
-
-    def make_trg_mask(self, trg):
-        seq_length = trg.shape[1]
-        trg_mask = (trg != self.trg_pad_idx).unsqueeze(1).unsqueeze(2)
-        trg_sub_mask = torch.tril(torch.ones((seq_length, seq_length), device=self.device)).bool()
-        return trg_mask & trg_sub_mask
-
-    def forward(self, src, trg):
-        src_mask = self.make_src_mask(src)
-        trg_mask = self.make_trg_mask(trg)
-        src = self.encoder(self.src_embed(src), src_mask)
-        output = self.decoder(self.trg_embed(trg), src, trg_mask, src_mask)
-        return output
-
-# Function to create the model
-def make_model(device, src_vocab, trg_vocab, n_layers=3, d_model=256, d_ffn=512, n_heads=8, dropout=0.1, max_length=50):
-    encoder = Encoder(d_model, n_layers, n_heads, d_ffn, dropout)
-    decoder = Decoder(len(trg_vocab), d_model, n_layers, n_heads, d_ffn, dropout)
-    src_embed = nn.Sequential(Embeddings(len(src_vocab), d_model), PositionalEncoding(d_model, dropout, max_length))
-    trg_embed = nn.Sequential(Embeddings(len(trg_vocab), d_model), PositionalEncoding(d_model, dropout, max_length))
-    model = Transformer(encoder, decoder, src_embed, trg_embed, src_vocab.get_stoi()["<pad>"], trg_vocab.get_stoi()["<pad>"], device)
-    for p in model.parameters():
-        if p.dim() > 1:
-            nn.init.xavier_uniform_(p)
-    return model
-
-# Load vocabularies (assumes vocab_src.pt and vocab_trg.pt are saved from training)
-vocab_src = torch.load("en_vocab.pt")
-vocab_trg = torch.load("te_vocab.pt")
+from torchtext.vocab import Vocab
+from collections import Counter
+import math
+import spacy
+import io
+import numpy as np
+import traceback
 
 # Initialize Flask app
 app = Flask(__name__)
-# Set device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Create the model with the same architecture as during training
-model = make_model(device, vocab_src, vocab_trg, n_layers=3, d_model=256, d_ffn=512, n_heads=8, dropout=0.1, max_length=50)
+# --- Configuration & Hyperparameters ---
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Using device: {DEVICE}")
 
-# Load the trained model weights
-model.load_state_dict(torch.load("transformer-model_tel.pt", map_location=device))
-model.to(device)
-model.eval()
+# Model Hyperparameters
+EMB_SIZE = 256
+NHEAD = 8
+FFN_HID_DIM = 512
+NUM_ENCODER_LAYERS = 3
+NUM_DECODER_LAYERS = 3
+DROPOUT = 0.1
 
-# Define the tokenizer for English
-tokenizer_en = get_tokenizer("basic_english")
+# Special tokens
+UNK_IDX, PAD_IDX, BOS_IDX, EOS_IDX = 0, 1, 2, 3
+special_symbols = ['<unk>', '<pad>', '<bos>', '<eos>']
 
-# Translation function
-def translate_sentence(sentence, model, device, vocab_src, vocab_trg, tokenizer, max_length=50):
+# Global variables for model and transforms
+model = None
+vocab_transform = None
+token_transform = None
+text_transform = None
+
+# --- Model Definition ---
+
+class SinusoidalPositionalEncoding(nn.Module):
+    def __init__(self, emb_size: int, dropout: float, maxlen: int = 5000):
+        super(SinusoidalPositionalEncoding, self).__init__()
+        den = torch.exp(- torch.arange(0, emb_size, 2) * math.log(10000) / emb_size)
+        pos = torch.arange(0, maxlen).reshape(maxlen, 1)
+        pos_embedding = torch.zeros((maxlen, emb_size))
+        pos_embedding[:, 0::2] = torch.sin(pos * den)
+        pos_embedding[:, 1::2] = torch.cos(pos * den)
+        pos_embedding = pos_embedding.unsqueeze(0)
+
+        self.dropout = nn.Dropout(dropout)
+        self.register_buffer('pos_embedding', pos_embedding)
+
+    def forward(self, token_embedding):
+        seq_len = token_embedding.size(1)
+        return self.dropout(token_embedding + self.pos_embedding[:, :seq_len, :])
+
+class TokenEmbedding(nn.Module):
+    def __init__(self, vocab_size: int, emb_size):
+        super(TokenEmbedding, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, emb_size)
+        self.emb_size = emb_size
+
+    def forward(self, tokens):
+        return self.embedding(tokens.long()) * math.sqrt(self.emb_size)
+
+class Seq2SeqTransformer(nn.Module):
+    def __init__(self,
+                 num_encoder_layers: int,
+                 num_decoder_layers: int,
+                 emb_size: int,
+                 nhead: int,
+                 src_vocab_size: int,
+                 tgt_vocab_size: int,
+                 dim_feedforward: int = 512,
+                 dropout: float = 0.1,
+                 max_seq_len: int = 5000):
+        super(Seq2SeqTransformer, self).__init__()
+        self.transformer = nn.Transformer(d_model=emb_size,
+                                       nhead=nhead,
+                                       num_encoder_layers=num_encoder_layers,
+                                       num_decoder_layers=num_decoder_layers,
+                                       dim_feedforward=dim_feedforward,
+                                       dropout=dropout,
+                                       batch_first=True)
+        self.generator = nn.Linear(emb_size, tgt_vocab_size)
+        self.src_tok_emb = TokenEmbedding(src_vocab_size, emb_size)
+        self.tgt_tok_emb = TokenEmbedding(tgt_vocab_size, emb_size)
+        self.positional_encoding = SinusoidalPositionalEncoding(emb_size, dropout=dropout, maxlen=max_seq_len)
+
+    def forward(self,
+                src,
+                trg,
+                src_mask,
+                tgt_mask,
+                src_padding_mask,
+                tgt_padding_mask,
+                memory_key_padding_mask):
+        src_emb = self.positional_encoding(self.src_tok_emb(src))
+        tgt_emb = self.positional_encoding(self.tgt_tok_emb(trg))
+
+        if src_mask is not None and src_mask.dtype != torch.bool: src_mask = src_mask.bool()
+        if tgt_mask is not None and tgt_mask.dtype != torch.bool: tgt_mask = tgt_mask.bool()
+        if src_padding_mask is not None and src_padding_mask.dtype != torch.bool: src_padding_mask = src_padding_mask.bool()
+        if tgt_padding_mask is not None and tgt_padding_mask.dtype != torch.bool: tgt_padding_mask = tgt_padding_mask.bool()
+        if memory_key_padding_mask is not None and memory_key_padding_mask.dtype != torch.bool: memory_key_padding_mask = memory_key_padding_mask.bool()
+
+        outs = self.transformer(src_emb, tgt_emb, src_mask, tgt_mask, None,
+                                src_padding_mask, tgt_padding_mask, memory_key_padding_mask)
+        return self.generator(outs)
+
+    def encode(self, src, src_mask, src_padding_mask=None):
+        return self.transformer.encoder(self.positional_encoding(self.src_tok_emb(src)),
+                                        mask=src_mask, src_key_padding_mask=src_padding_mask)
+
+    def decode(self, tgt, memory, tgt_mask, tgt_padding_mask=None, memory_key_padding_mask=None):
+        return self.transformer.decoder(self.positional_encoding(self.tgt_tok_emb(tgt)), memory,
+                                        tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_padding_mask,
+                                        memory_key_padding_mask=memory_key_padding_mask)
+
+# --- Helper Functions ---
+
+def generate_square_subsequent_mask(sz):
+    mask = (torch.triu(torch.ones((sz, sz), device=DEVICE)) == 1).transpose(0, 1)
+    mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
+    return mask
+
+def tokenize_te_placeholder(text):
+    return text.split()
+
+def sequential_transforms(*transforms):
+    def func(txt_input):
+        for transform in transforms:
+            txt_input = transform(txt_input)
+        return txt_input
+    return func
+
+def tensor_transform(token_ids):
+    return torch.cat((torch.tensor([BOS_IDX]),
+                      torch.tensor(token_ids),
+                      torch.tensor([EOS_IDX])))
+
+# --- Translation Function ---
+
+def translate_sentence(src_sentence: str, max_len: int = 50):
+    """Translate English sentence to Telugu"""
+    global model, vocab_transform, text_transform
+    
     model.eval()
-    tokens = tokenizer(sentence)
-    src = ['<bos>'] + [token.lower() for token in tokens] + ['<eos>']
-    src_indexes = [vocab_src[token] if token in vocab_src else vocab_src['<unk>'] for token in src]
-    src_tensor = torch.tensor(src_indexes, dtype=torch.long).unsqueeze(0).to(device)
-    trg_indexes = [vocab_trg['<bos>']]
-    for i in range(max_length):
-        trg_tensor = torch.tensor(trg_indexes, dtype=torch.long).unsqueeze(0).to(device)
-        with torch.no_grad():
-            output = model(src_tensor, trg_tensor)
-            pred_token = output.argmax(2)[:, -1].item()
-            if pred_token == vocab_trg['<eos>'] or i == max_length - 1:
+    
+    with torch.no_grad():
+        # Preprocess the source sentence
+        src_tensor = text_transform['en'](src_sentence).unsqueeze(0).to(DEVICE)
+        src_padding_mask = (src_tensor == PAD_IDX).to(DEVICE)
+        
+        # Encoder output (memory)
+        memory = model.encode(src_tensor, src_mask=None, src_padding_mask=src_padding_mask)
+        memory = memory.to(DEVICE)
+        
+        # Start decoding with BOS token
+        ys = torch.ones(1, 1).fill_(BOS_IDX).type(torch.long).to(DEVICE)
+        
+        for _ in range(max_len - 1):
+            tgt_seq_len = ys.size(1)
+            tgt_mask = generate_square_subsequent_mask(tgt_seq_len).to(DEVICE)
+            
+            out = model.decode(ys, memory, tgt_mask, 
+                             tgt_padding_mask=None, 
+                             memory_key_padding_mask=src_padding_mask)
+            
+            # Get the probability of the last token
+            prob = model.generator(out[:, -1])
+            _, next_word_idx = torch.max(prob, dim=1)
+            next_word_idx = next_word_idx.item()
+            
+            # Append predicted token to the sequence
+            ys = torch.cat([ys, torch.ones(1, 1).type_as(src_tensor.data).fill_(next_word_idx)], dim=1)
+            
+            if next_word_idx == EOS_IDX:
                 break
-            trg_indexes.append(pred_token)
-    trg_tokens = [vocab_trg.get_itos()[index] for index in trg_indexes[1:]]  # Skip '<bos>'
-    return " ".join(trg_tokens)
+        
+        # Convert token IDs to words
+        tgt_tokens = [vocab_transform['te'].get_itos()[i] for i in ys.squeeze(0).tolist()]
+        
+        # Remove special tokens and join
+        return " ".join([token for token in tgt_tokens if token not in special_symbols])
 
-@app.route('/translate',methods=['POST'])
+# --- Flask Routes ---
+@app.route('/translate', methods=['POST'])
 def translate():
+    """Main translation endpoint"""
     try:
-        data=request.get_json()
-        if not data or 'sentence' not in data:
-            return jsonify({"error":"No sentence provided"}),400
+        # Check if model is loaded
+        if model is None:
+            print("Error: Model not loaded")
+            return jsonify({
+                'error': 'Model not loaded. Please check server logs.',
+                'success': False
+            }), 500
         
-        sentence = data['sentence']
-        if not isinstance(sentence, str) or not sentence.strip():
-            return jsonify({"error": "Invalid sentence"}), 400
+        # Debug: Print request info
+        print(f"Content-Type: {request.content_type}")
+        print(f"Request data: {request.data}")
         
-        translation = translate_sentence(sentence, model, device, vocab_src, vocab_trg, tokenizer_en)
-
-        # Return the translation as JSON
-        return jsonify({"translation": translation}), 200
+        # Get JSON data from request
+        data = request.get_json()
+        print(f"Parsed JSON: {data}")
+        
+        if not data:
+            print("Error: No JSON data received")
+            return jsonify({
+                'error': 'No JSON data received. Please send request with Content-Type: application/json',
+                'success': False
+            }), 400
+            
+        if 'sentence' not in data:
+            print("Error: Missing 'text' field")
+            return jsonify({
+                'error': 'Missing "text" field in request body. Expected format: {"text": "your text here"}',
+                'success': False,
+                'received_data': data
+            }), 400
+        
+        english_text = data['sentence'].strip() if isinstance(data['sentence'], str) else str(data['sentence']).strip()
+        print(f"Input text: '{english_text}'")
+        
+        if not english_text:
+            print("Error: Empty text provided")
+            return jsonify({
+                'error': 'Empty text provided',
+                'success': False
+            }), 400
+        
+        # Optional parameters
+        max_length = data.get('max_length', 50)
+        print(f"Max length: {max_length}")
+        
+        # Perform translation
+        print("Starting translation...")
+        telugu_translation = translate_sentence(english_text, max_len=max_length)
+        print(f"Translation result: '{telugu_translation}'")
+        
+        return jsonify({
+            'success': True,
+            'input': english_text,
+            'translation': telugu_translation,
+            'language_pair': 'en-te'
+        })
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Translation error: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({
+            'error': f'Translation failed: {str(e)}',
+            'success': False
+        }), 500
 
-# Main execution
-if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=5002,debug=True)
+
+def initialize_model():
+    """Initialize and load the translation model"""
+    global model, vocab_transform, token_transform, text_transform
+    
+    try:
+        print("Loading vocabularies...")
+        # Load vocabularies
+        vocab_transform_en_loaded = torch.load('vocab_transform_en.pt', map_location=DEVICE)
+        vocab_transform_te_loaded = torch.load('vocab_transform_te.pt', map_location=DEVICE)
+        
+        vocab_transform = {'en': vocab_transform_en_loaded, 'te': vocab_transform_te_loaded}
+        SRC_VOCAB_SIZE = len(vocab_transform['en'])
+        TGT_VOCAB_SIZE = len(vocab_transform['te'])
+        
+        print(f"Source (English) vocabulary size: {SRC_VOCAB_SIZE}")
+        print(f"Target (Telugu) vocabulary size: {TGT_VOCAB_SIZE}")
+        
+        # Initialize tokenizers
+        print("Initializing tokenizers...")
+        try:
+            nlp_en = spacy.load('en_core_web_sm')
+        except OSError:
+            raise Exception("Spacy 'en_core_web_sm' model not found. Please run: python -m spacy download en_core_web_sm")
+        
+        token_transform = {}
+        token_transform['en'] = get_tokenizer('spacy', language='en_core_web_sm')
+        token_transform['te'] = get_tokenizer(tokenize_te_placeholder)
+        
+        # Create text transforms
+        text_transform = {}
+        for ln in ['en', 'te']:
+            text_transform[ln] = sequential_transforms(token_transform[ln],
+                                                    vocab_transform[ln],
+                                                    tensor_transform)
+        
+        # Initialize model
+        print("Initializing model...")
+        model = Seq2SeqTransformer(NUM_ENCODER_LAYERS, NUM_DECODER_LAYERS, EMB_SIZE,
+                                 NHEAD, SRC_VOCAB_SIZE, TGT_VOCAB_SIZE, FFN_HID_DIM, DROPOUT)
+        model = model.to(DEVICE)
+        
+        # Load trained model weights
+        print("Loading model weights...")
+        model_path = 'transformer_eng_tel_scratch_full_data.pt'
+        model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+        model.eval()
+        
+        print("Model loaded successfully!")
+        return True
+        
+    except FileNotFoundError as e:
+        print(f"File not found: {e}")
+        print("Make sure all required files exist:")
+        print("- vocab_transform_en.pt")
+        print("- vocab_transform_te.pt") 
+        print("- transformer_eng_tel_scratch_full_data.pt")
+        return False
+    except Exception as e:
+        print(f"Error initializing model: {e}")
+        print(traceback.format_exc())
+        return False
+
+# --- Main Execution ---
+
+if __name__ == '__main__':
+    print("Initializing English to Telugu Translation API...")
+    
+    if initialize_model():
+        print("Starting Flask server...")
+        app.run(host='0.0.0.0', port=5002, debug=False)
+    else:
+        print("Failed to initialize model. Server not started.")
+        exit(1)
