@@ -154,7 +154,7 @@
     color: #505a66;
   }
   
-  .cta-button {
+  /* .cta-button {
     background-color: #3498db;
     color: white;
     border: none;
@@ -168,7 +168,7 @@
   
   .cta-button:hover {
     background-color: #2980b9;
-  }
+  } */
   
   /* Responsive adjustments */
   @media (max-width: 768px) {

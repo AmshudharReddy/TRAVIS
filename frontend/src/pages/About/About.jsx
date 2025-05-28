@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import './About.css'; // Make sure to create this CSS file
+import { FaArrowRight } from 'react-icons/fa';
 
 const About = memo(() => {
   return (
@@ -85,7 +86,7 @@ const About = memo(() => {
         <div className="about-cta">
           <h3>Experience the TRAVIS Advantage</h3>
           <p>Discover how our AI-powered solution is transforming customer service capabilities for visually impaired banking professionals.</p>
-          <button className="cta-button">Request Demo</button>
+          <button className="primary-button cta-button">Request Demo <FaArrowRight className="button-icon" /></button>
         </div>
       </div>
     </div>
