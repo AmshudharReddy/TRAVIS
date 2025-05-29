@@ -14,46 +14,44 @@ const PopupSystem = ({
   setFontSize,
   darkMode,
   setDarkMode,
-  notificationsEnabled,
-  setNotificationsEnabled,
+  transformerMode,
+  setTransformerMode,
   autoReadEnabled,
   setAutoReadEnabled
 }) => {
+  const closePopup = () => setActivePopup(null);
   if (!activePopup) return null;
 
   return (
-    <div className="popup-overlay" onClick={() => setActivePopup(null)}>
+    <div className="popup-overlay" onClick={closePopup}>
       <div className="popup-container" onClick={(e) => e.stopPropagation()}>
-        {activePopup === 'speak' && (
-          <SpeakPopup 
-            onClose={() => setActivePopup(null)} 
-            setQuery={setQuery}
-          />
+        {activePopup === "speak" && (
+          <SpeakPopup onClose={closePopup} setQuery={setQuery} />
         )}
-        {activePopup === 'recent' && (
-          <RecentPopup 
-            recentHighlights={recentHighlights} 
+        {activePopup === "recent" && (
+          <RecentPopup
+            recentHighlights={recentHighlights}
             queryHistory={queryHistory}
             setQuery={setQuery}
-            onClose={() => setActivePopup(null)}
+            onClose={closePopup}
           />
         )}
-        {activePopup === 'fontSize' && (
-          <FontSizePopup 
+        {activePopup === "fontSize" && (
+          <FontSizePopup
             fontSize={fontSize}
             setFontSize={setFontSize}
-            onClose={() => setActivePopup(null)}
+            onClose={closePopup}
           />
         )}
-        {activePopup === 'settings' && (
-          <SettingsPopup 
+        {activePopup === "settings" && (
+          <SettingsPopup
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            notificationsEnabled={notificationsEnabled}
-            setNotificationsEnabled={setNotificationsEnabled}
+            transformerMode={transformerMode}
+            setTransformerMode={setTransformerMode}
             autoReadEnabled={autoReadEnabled}
             setAutoReadEnabled={setAutoReadEnabled}
-            onClose={() => setActivePopup(null)}
+            onClose={closePopup}
           />
         )}
       </div>

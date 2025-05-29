@@ -1,15 +1,15 @@
 import React, { useRef } from "react";
 import { FaTimes, FaVolumeUp, FaLanguage } from "react-icons/fa";
 
-const ResponseDisplay = ({ 
-  lastQuery, 
-  response, 
-  responseCategory, 
-  translatedResponse, 
-  isTranslating, 
-  onTranslate, 
-  onClose, 
-  speak 
+const ResponseDisplay = ({
+  lastQuery,
+  response,
+  responseCategory,
+  translatedResponse,
+  isTranslating,
+  onTranslate,
+  onClose,
+  speak
 }) => {
   const responseRef = useRef(null);
   const responseContentRef = useRef(null);
@@ -26,16 +26,30 @@ const ResponseDisplay = ({
         </button>
       </div>
       <div className="response-content" ref={responseContentRef}>
-        <p><strong>Response:</strong> {response}</p>
-        
-        {translatedResponse && (
+        <p><strong>Response:</strong>
+          {/* {response} */}
+          {response.split('\n').map((line, index) => (
+            <p key={index}>{line}</p>
+          ))}
+        </p>
+
+        {/* {translatedResponse && (
           <div className="translated-content">
             <p><strong>Telugu Translation:</strong> {translatedResponse}</p>
           </div>
+        )} */}
+        {translatedResponse && (
+          <div className="translated-response">
+            <h4>Translated Response:</h4>
+            {translatedResponse.split('\n').map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+          </div>
         )}
-        
+
+
         <div className="response-actions">
-          <button 
+          <button
             onClick={async () => {
               try {
                 const res = await fetch("http://localhost:5000/api/query/tts", {
@@ -43,9 +57,9 @@ const ResponseDisplay = ({
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ text: translatedResponse || response })
                 });
-            
+
                 if (!res.ok) throw new Error("TTS failed");
-            
+
                 const audioBlob = await res.blob();
                 const audioUrl = URL.createObjectURL(audioBlob);
                 const audio = new Audio(audioUrl);
@@ -54,16 +68,16 @@ const ResponseDisplay = ({
                 console.error("Error playing TTS:", err);
               }
             }}
-             
-            className="tts-btn" 
+
+            className="tts-btn"
             title="Listen to response"
           >
             <FaVolumeUp />{' '}Listen
           </button>
-          
-          <button 
-            onClick={onTranslate} 
-            className="translate-btn" 
+
+          <button
+            onClick={onTranslate}
+            className="translate-btn"
             title="Translate Response"
             disabled={isTranslating}
           >

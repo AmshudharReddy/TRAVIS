@@ -1,14 +1,24 @@
 import React from "react";
 
-const SettingsPopup = ({ 
-  darkMode, 
-  setDarkMode, 
-  notificationsEnabled, 
-  setNotificationsEnabled, 
-  autoReadEnabled, 
-  setAutoReadEnabled, 
-  onClose 
+const SettingsPopup = ({
+  darkMode,
+  setDarkMode,
+  transformerMode,
+  setTransformerMode,
+  autoReadEnabled,
+  setAutoReadEnabled,
+  onClose
 }) => {
+  const handleToggle = (key, currentValue, setter) => {
+    if (typeof setter === "function") {
+      const newValue = !currentValue;
+      setter(newValue);
+      localStorage.setItem(key, JSON.stringify(newValue));
+    } else {
+      console.error(`Invalid setter for ${key}`);
+    }
+  };
+
   return (
     <div className="popup-content">
       <h2>Settings</h2>
@@ -17,11 +27,8 @@ const SettingsPopup = ({
           <label>
             <span>Dark Mode</span>
             <button
-              className={`toggle-switch ${darkMode ? 'active' : ''}`}
-              onClick={() => {
-                setDarkMode(!darkMode);
-                localStorage.setItem('darkMode', !darkMode);
-              }}
+              className={`toggle-switch ${darkMode ? "active" : ""}`}
+              onClick={() => handleToggle("darkMode", darkMode, setDarkMode)}
             >
               {darkMode ? "ON" : "OFF"}
             </button>
@@ -29,12 +36,14 @@ const SettingsPopup = ({
         </div>
         <div className="setting-item">
           <label>
-            <span>Notifications</span>
+            <span>Transformer Mode</span>
             <button
-              className={`toggle-switch ${notificationsEnabled ? 'active' : ''}`}
-              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+              className={`toggle-switch ${transformerMode ? "active" : ""}`}
+              onClick={() =>
+                handleToggle("transformerMode", transformerMode, setTransformerMode)
+              }
             >
-              {notificationsEnabled ? "ON" : "OFF"}
+              {transformerMode ? "ON" : "OFF"}
             </button>
           </label>
         </div>
@@ -42,8 +51,10 @@ const SettingsPopup = ({
           <label>
             <span>Auto-read Responses</span>
             <button
-              className={`toggle-switch ${autoReadEnabled ? 'active' : ''}`}
-              onClick={() => setAutoReadEnabled(!autoReadEnabled)}
+              className={`toggle-switch ${autoReadEnabled ? "active" : ""}`}
+              onClick={() =>
+                handleToggle("autoReadEnabled", autoReadEnabled, setAutoReadEnabled)
+              }
             >
               {autoReadEnabled ? "ON" : "OFF"}
             </button>

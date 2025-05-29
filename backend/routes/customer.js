@@ -1,7 +1,20 @@
+// routes/customerRoutes.js
 const express = require('express');
 const router = express.Router();
-const Customer = require('../models/Customer');
+const CustomerController = require('../controllers/customerController');
 const { body, validationResult } = require('express-validator');
+
+// Middleware for authentication (you should implement this)
+const authMiddleware = (req, res, next) => {
+  const token = req.header('auth-token');
+  if (!token) {
+    return res.status(401).json({ error: 'Access denied. No token provided.' });
+  }
+  
+  // Add your token verification logic here
+  // For now, just proceed
+  next();
+};
 
 // Validation middleware for customer data
 const customerValidation = [
@@ -35,175 +48,27 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+// CRUD Routes
 // Add or Update customer
-router.post(
-  '/add-or-update', 
-  customerValidation, 
-  handleValidationErrors,
-  async (req, res) => {
-    try {
-      const data = req.body;
-      data.lastUpdated = new Date();
-
-      // Use findOneAndUpdate with additional options for more robust upsert
-      const customer = await Customer.findOneAndUpdate(
-        { accountNumber: data.accountNumber },
-        data,
-        { 
-          new: true,           // Return the modified document
-          upsert: true,        // Create if not exists
-          runValidators: true, // Run model validations on update
-          context: 'query'     // Needed for unique validation on update
-        }
-      );
-
-      res.status(200).json({ 
-        success: true, 
-        customer,
-        message: customer ? 'Customer saved successfully' : 'Customer created successfully'
-      });
-    } catch (err) {
-      console.error('Customer save error:', err);
-      res.status(500).json({ 
-        success: false, 
-        message: 'Error saving customer', 
-        error: err.message 
-      });
-    }
-  }
-);
+router.post('/add-or-update', customerValidation, handleValidationErrors, CustomerController.addOrUpdateCustomer);
 
 // Get customer by account number
-router.get('/:accountNumber', async (req, res) => {
-  try {
-    const customer = await Customer.findOne({ 
-      accountNumber: req.params.accountNumber 
-    });
-
-    if (!customer) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Customer not found' 
-      });
-    }
-
-    res.status(200).json({ 
-      success: true, 
-      customer 
-    });
-  } catch (err) {
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error', 
-      error: err.message 
-    });
-  }
-});
+router.get('/:accountNumber', CustomerController.getCustomer);
 
 // Add a transaction to a customer
-router.post('/:accountNumber/transaction', async (req, res) => {
-  try {
-    const { description, amount, type } = req.body;
-    
-    // Validate transaction inputs
-    if (!description || !amount || !type) {
-      return res.status(400).json({
-        success: false,
-        message: 'Description, amount, and type are required'
-      });
-    }
-
-    const customer = await Customer.findOne({ 
-      accountNumber: req.params.accountNumber 
-    });
-
-    if (!customer) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Customer not found' 
-      });
-    }
-
-    // Add transaction using the custom method
-    await customer.addTransaction(description, amount, type);
-
-    res.status(200).json({
-      success: true,
-      message: 'Transaction added successfully',
-      customer
-    });
-  } catch (err) {
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error adding transaction', 
-      error: err.message 
-    });
-  }
-});
+router.post('/:accountNumber/transaction', CustomerController.addTransaction);
 
 // Get all customers (with optional filtering)
-router.get('/', async (req, res) => {
-  try {
-    const { 
-      accountType, 
-      loanStatus, 
-      creditCardStatus, 
-      kycStatus 
-    } = req.query;
-
-    // Build filter object
-    const filter = {};
-    if (accountType) filter.accountType = accountType;
-    if (loanStatus) filter.loanStatus = loanStatus;
-    if (creditCardStatus) filter.creditCardStatus = creditCardStatus;
-    if (kycStatus) filter.kycStatus = kycStatus;
-
-    const customers = await Customer.find(filter)
-      .select('-recentTransactions') // Exclude detailed transactions
-      .sort({ lastUpdated: -1 })     // Sort by most recently updated
-      .limit(100);                   // Limit to prevent overwhelming response
-
-    res.status(200).json({
-      success: true,
-      count: customers.length,
-      customers
-    });
-  } catch (err) {
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error fetching customers', 
-      error: err.message 
-    });
-  }
-});
+router.get('/', CustomerController.getAllCustomers);
 
 // Delete a customer by account number
-router.delete('/:accountNumber', async (req, res) => {
-  try {
-    const customer = await Customer.findOneAndDelete({ 
-      accountNumber: req.params.accountNumber 
-    });
+router.delete('/:accountNumber', CustomerController.deleteCustomer);
 
-    if (!customer) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Customer not found' 
-      });
-    }
+// Query Processing Routes
+// General query endpoint (non-sensitive)
+router.post('/query', authMiddleware, CustomerController.handleQuery);
 
-    res.status(200).json({ 
-      success: true, 
-      message: 'Customer deleted successfully',
-      deletedCustomer: customer
-    });
-  } catch (err) {
-    console.error('Delete customer error:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error deleting customer', 
-      error: err.message 
-    });
-  }
-});
+// Secure query endpoint (requires account number)
+router.post('/secureQuery', authMiddleware, CustomerController.handleSecureQuery);
 
 module.exports = router;
