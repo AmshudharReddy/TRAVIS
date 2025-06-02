@@ -1,0 +1,53 @@
+/* WelcomeMessage.css - Welcome message component styles */
+
+/* Enhanced Welcome Message */
+.welcome-message {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  margin-bottom: 1.2rem;
+  border-left: 5px solid var(--primary-color);
+}
+
+.dark-mode .welcome-message {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-left: 5px solid #6a9cde;
+}
+
+.welcome-message h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.welcome-message p {
+  line-height: 1.6;
+  color: var(--secondary-color);
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.dark-mode .welcome-message h2 {
+  color: #6a9cde;
+}
+
+.dark-mode .welcome-message p {
+  color: #adb5bd;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  /* Welcome section */
+  .welcome-message h2 {
+    font-size: 1.5rem;
+  }
+  
+  .welcome-message p {
+    max-width: 95%;
+  }
+}

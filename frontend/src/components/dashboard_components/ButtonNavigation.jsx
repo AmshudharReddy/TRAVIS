@@ -1,4 +1,5 @@
 import React from "react";
+import './ButtonNavigation.css';
 
 const ButtonNavigation = ({ togglePopup }) => {
   return (

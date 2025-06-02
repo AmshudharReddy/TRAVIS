@@ -1,0 +1,141 @@
+/* QueryInput.css - Query input component styles */
+
+/* Query Label */
+.query-label {
+  margin-bottom: -0.3rem;
+  font-weight: 500;
+  color: #4b4e51;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.dark-mode .query-label {
+  color: #adb5bd;
+}
+
+/* Enhanced Query Section */
+.query-section {
+  width: 100%;
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+/* Professional Query Input */
+.query-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: white;
+  transition: var(--transition);
+  border: 1px solid #e1e1e1;
+}
+
+.query-input-container:focus-within {
+  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.3);
+  border-color: var(--primary-color);
+}
+
+.dark-mode .query-input-container {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-color: #444;
+}
+
+.dark-mode .query-input-container:focus-within {
+  box-shadow: 0 0 0 2px rgba(106, 156, 222, 0.3);
+  border-color: #6a9cde;
+}
+
+.query-input {
+  flex-grow: 1;
+  padding: 1.25rem 1.5rem;
+  border: none;
+  resize: none;
+  min-height: 80px;
+  font-family: inherit;
+  outline: none;
+  background-color: transparent;
+  color: inherit;
+  font-size: 1rem;
+}
+
+.query-input::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.process-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  width: 60px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1.2rem;
+}
+
+.process-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.process-btn:disabled {
+  background-color: var(--secondary-color);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Response Mode Query Section (Fixed at Bottom) */
+.response-mode-query {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--light-bg);
+  padding: 1rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.response-mode-query.entering {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.dark-mode .response-mode-query {
+  background-color: var(--dark-bg);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Font size fixes */
+.font-size-small .query-input {
+  font-size: 1.25rem !important;
+}
+
+.font-size-medium .query-input {
+  font-size: 2rem !important;
+}
+
+.font-size-large .query-input {
+  font-size: 3rem !important;
+}
+
+.font-size-small .response-mode-query .query-input {
+  font-size: 1rem !important;
+}
+
+.font-size-medium .response-mode-query .query-input {
+  font-size: 2rem !important;
+}
+
+.font-size-large .response-mode-query .query-input {
+  font-size: 3rem !important;
+}

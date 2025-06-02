@@ -1,0 +1,226 @@
+/* RecentHighlights.css - Recent Highlights Popup styles */
+
+/* Recent Highlights Popup */
+.popup-content.recent-highlights {
+  padding: 1.5rem;
+  max-height: 80vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-container.recent-popup {
+  width: 95%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.recent-highlights-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.recent-highlights-header h2 {
+  margin: 0;
+  font-size: inherit;
+}
+
+.dark-mode .recent-highlights-header {
+  border-bottom-color: #444;
+}
+
+.highlights-list-container {
+  overflow-y: auto;
+  flex-grow: 1;
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+}
+
+.highlights-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .highlights-list {
+  border-color: #444;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.highlight-item {
+  padding: 1.25rem;
+  border-bottom: 1px solid #eee;
+  transition: var(--transition);
+  word-break: break-word;
+}
+
+.highlight-item:last-child {
+  border-bottom: none;
+}
+
+.dark-mode .highlight-item {
+  border-bottom-color: #444;
+}
+
+.highlight-query {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+  line-height: 1.4;
+  padding-left: 0.5rem;
+  border-left: 3px solid var(--primary-color);
+  word-break: break-word;
+}
+
+.dark-mode .highlight-query {
+  color: #6a9cde;
+  border-left-color: #6a9cde;
+}
+
+.highlight-response {
+  line-height: 1.5;
+  color: var(--secondary-color);
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 6px;
+  position: relative;
+  word-break: break-word;
+}
+
+.dark-mode .highlight-response {
+  color: #adb5bd;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.highlight-category {
+  font-size: 0.7rem;
+  font-weight: 500;
+  background-color: rgba(74, 111, 165, 0.1);
+  color: var(--primary-color);
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  max-width: fit-content;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.dark-mode .highlight-category {
+  background-color: rgba(106, 156, 222, 0.2);
+  color: #6a9cde;
+}
+
+.highlight-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.highlight-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.highlight-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .highlight-btn {
+  background-color: #6a9cde;
+}
+
+.dark-mode .highlight-btn:hover {
+  background-color: #5a8cce;
+}
+
+.popup-actions.recent-highlights-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  align-items: center;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+  flex-shrink: 0;
+}
+
+.dark-mode .popup-actions.recent-highlights-actions {
+  border-top-color: #444;
+}
+
+.view-all-link {
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
+
+.view-all-link:hover {
+  background-color: rgba(74, 111, 165, 0.1);
+}
+
+.dark-mode .view-all-link:hover {
+  background-color: rgba(106, 156, 222, 0.1);
+}
+
+.no-highlights {
+  text-align: center;
+  padding: 2rem;
+  color: var(--secondary-color);
+}
+
+.no-highlights-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .popup-container.recent-popup {
+    width: 98%;
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-container.recent-popup {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .popup-content.recent-highlights {
+    padding: 1rem;
+  }
+  
+  .highlight-actions {
+    justify-content: center;
+  }
+}

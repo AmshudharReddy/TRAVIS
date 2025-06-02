@@ -1,0 +1,77 @@
+/* ButtonNavigation.css - Button navigation component styles */
+
+/* Button Navigation */
+.button-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 0.75rem 0;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  transition: var(--transition);
+}
+
+.icon-btn:hover {
+  transform: translateY(-3px);
+}
+
+.circle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+  box-shadow: var(--box-shadow);
+  font-size: 1.5rem;
+  transition: var(--transition);
+}
+
+.dark-mode .circle-icon {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  /* Navigation */
+  .button-nav {
+    gap: 1rem;
+  }
+  
+  .circle-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Navigation */
+  .button-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0.5rem 0;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.75rem;
+  }
+  
+  .icon-btn {
+    flex: 0 0 auto;
+    min-width: 70px;
+  }
+}

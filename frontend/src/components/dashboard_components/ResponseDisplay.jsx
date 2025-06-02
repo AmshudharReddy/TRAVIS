@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import './ResponseDisplay.css';
 import { FaTimes, FaVolumeUp, FaLanguage } from "react-icons/fa";
 
 const ResponseDisplay = ({

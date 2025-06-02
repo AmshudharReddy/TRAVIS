@@ -1,0 +1,32 @@
+/* src/styles/variables.css */
+:root {
+  --primary-color: #4a6fa5;
+  --primary-hover: #3a5a8a;
+  --secondary-color: #6c757d;
+  --light-bg: #f8f9fa;
+  --light-text: #212529;
+  --dark-bg: #1a1a1a;
+  --dark-text: #f8f9fa;
+  --dark-component-bg: #2c2c2c;
+  --border-radius: 38px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+  
+  /* Font sizes */
+  --font-size-small: 20px;
+  --font-size-medium: 40px;
+  --font-size-large: 60px;
+  
+  /* Response mode dynamic font sizes */
+  --font-size-query-small: 1.25rem;
+  --font-size-category-small: 1rem;
+  --font-size-response-small: 1.25rem;
+  
+  --font-size-query-medium: 2rem;
+  --font-size-category-medium: 1.4rem;
+  --font-size-response-medium: 2rem;
+  
+  --font-size-query-large: 3rem;
+  --font-size-category-large: 2.1rem;
+  --font-size-response-large: 3rem;
+}

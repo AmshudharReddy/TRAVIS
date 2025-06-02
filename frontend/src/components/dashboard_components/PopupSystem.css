@@ -1,0 +1,108 @@
+/* PopupSystem.css - Base popup overlay and container styles */
+
+/* ===== POPUP STYLES ===== */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.2s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.popup-container {
+  background-color: white;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: var(--transition);
+  transform: scale(0.9);
+  animation: scaleIn 0.2s forwards;
+}
+
+@keyframes scaleIn {
+  to { transform: scale(1); }
+}
+
+.dark-mode .popup-container {
+  background-color: var(--dark-component-bg);
+}
+
+.popup-content {
+  padding: 1.5rem;
+}
+
+.popup-content h2 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  text-align: center;
+  font-weight: 600;
+}
+
+.dark-mode .popup-content h2 {
+  color: #6a9cde;
+}
+
+/* Popup Buttons */
+.popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.primary-btn, .secondary-btn {
+  padding: 1rem 2.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+.primary-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.primary-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.secondary-btn {
+  background-color: #f0f0f0;
+  color: var(--light-text);
+  border: 1px solid #ddd;
+}
+
+.dark-mode .secondary-btn {
+  background-color: transparent;
+  border-color: #444;
+  color: var(--dark-text);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .popup-container {
+    width: 95%;
+  }
+}

@@ -1,0 +1,39 @@
+/* FontSizePopup.css - Font Size Popup styles */
+
+/* Font Size Popup */
+.font-size-options {
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+}
+
+.font-option {
+  padding: 1rem 2rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  background: none;
+  color: var(--light-text);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1.2rem;
+}
+
+.dark-mode .font-option {
+  border-color: #444;
+  color: var(--dark-text);
+}
+
+.font-option.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  /* Font size controls */
+  .font-size-options {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}

@@ -1,4 +1,19 @@
 import React from "react";
+// In PopupSystem component
+import './PopupSystem.css';
+
+// In VoiceInput component  
+import './popups/SpeakPopup.css';
+
+// In FontSizePopup component
+import './popups/FontSizePopup.css';
+
+// In RecentHighlights component
+import './popups/RecentPopup.css';
+
+// In SettingsPopup component
+import './popups/SettingsPopup.css';
+
 import SpeakPopup from "./popups/SpeakPopup";
 import RecentPopup from "./popups/RecentPopup";
 import FontSizePopup from "./popups/FontSizePopup";

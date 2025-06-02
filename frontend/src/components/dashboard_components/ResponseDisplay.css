@@ -1,0 +1,320 @@
+/* ResponseDisplay.css - Response display component styles */
+
+/* ===== RESPONSE MODE STYLES ===== */
+/* Response Mode Container - Improved to prevent overflow */
+.response-mode {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  position: relative;
+  margin-bottom: 180px; /* Increased margin to prevent overlap with fixed input */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.3s forwards;
+  overflow: visible; /* Ensure content doesn't get cut off */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dark-mode .response-mode {
+  background-color: var(--dark-component-bg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Response Header */
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+  width: 100%;
+}
+
+.dark-mode .response-header {
+  border-bottom-color: #444;
+}
+
+/* Query display in response header */
+.query-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 85%;
+}
+
+.query-display h3 {
+  margin: 0;
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: var(--font-size-query);
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  white-space: normal;
+  overflow: visible;
+}
+
+.dark-mode .query-display h3 {
+  color: #6a9cde;
+}
+
+/* Category badge */
+.response-category {
+  font-size: var(--font-size-category);
+  font-weight: 500;
+  background-color: rgba(74, 111, 165, 0.1);
+  color: var(--primary-color);
+  padding: 0.4rem 0.9rem;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  max-width: fit-content;
+  margin-top: 0.25rem;
+}
+
+.dark-mode .response-category {
+  background-color: rgba(106, 156, 222, 0.2);
+  color: #6a9cde;
+}
+
+/* Close Button */
+.close-response-btn {
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+  margin-top: 0.25rem;
+}
+
+.close-response-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-color);
+}
+
+.dark-mode .close-response-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #6a9cde;
+}
+
+/* Response content container - Improved to handle overflow better */
+.response-content {
+  position: relative;
+  line-height: 1.6;
+  padding-top: 0.5rem;
+  font-size: var(--font-size-response);
+  padding-bottom: 2rem; /* Add padding for spacing before actions */
+  width: 100%;
+  overflow-wrap: break-word;
+}
+
+.response-content p {
+  font-size: var(--font-size-response);
+  line-height: 1.6;
+}
+
+/* Response actions container - Improved to prevent overflow */
+.response-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  border-top: 1px solid #eee;
+  position: relative; /* Changed from sticky to relative */
+  background-color: inherit;
+  z-index: 5;
+  width: 100%;
+  flex-wrap: wrap; /* Allow buttons to wrap on narrow screens */
+}
+
+.dark-mode .response-actions {
+  border-top-color: #444;
+}
+
+/* Action Buttons (Translate and TTS) */
+.translate-btn, .tts-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  box-shadow: var(--box-shadow);
+  white-space: nowrap;
+}
+
+.translate-btn:hover, .tts-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .translate-btn, .dark-mode .tts-btn {
+  background-color: #6a9cde;
+}
+
+.dark-mode .translate-btn:hover, .dark-mode .tts-btn:hover {
+  background-color: #5a8cce;
+}
+
+/* Translation section styling */
+.translated-content {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem; /* Add spacing below translations */
+  padding: 1rem;
+  background-color: rgba(74, 111, 165, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-color);
+  width: 100%;
+}
+
+.dark-mode .translated-content {
+  background-color: rgba(106, 156, 222, 0.1);
+  border-left-color: #6a9cde;
+}
+
+/* Font size fixes */
+.font-size-small .query-display h3 {
+  font-size: var(--font-size-query-small) !important;
+}
+
+.font-size-medium .query-display h3 {
+  font-size: var(--font-size-query-medium) !important;
+}
+
+.font-size-large .query-display h3 {
+  font-size: var(--font-size-query-large) !important;
+}
+
+.font-size-small .response-category {
+  font-size: var(--font-size-category-small) !important;
+}
+
+.font-size-medium .response-category {
+  font-size: var(--font-size-category-medium) !important;
+}
+
+.font-size-large .response-category {
+  font-size: var(--font-size-category-large) !important;
+}
+
+.font-size-small .response-content p {
+  font-size: var(--font-size-response-small) !important;
+}
+
+.font-size-medium .response-content p {
+  font-size: var(--font-size-response-medium) !important;
+}
+
+.font-size-large .response-content p {
+  font-size: var(--font-size-response-large) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  /* Query display */
+  .query-display {
+    width: 80%;
+  }
+  
+  .query-display h3 {
+    max-width: 75%;
+    font-size: 1rem;
+  }
+  
+  /* Response section */
+  .response-content {
+    overflow-wrap: break-word;
+    padding-bottom: 150px; /* More padding for mobile */
+  }
+  
+  .response-mode {
+    padding: 1.5rem;
+    margin-bottom: 170px;
+  }
+  
+  .response-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  /* Buttons */
+  .translate-btn, .tts-btn {
+    flex: 1 1 auto;
+    min-width: 100px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Query display */
+  .query-display {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .query-display h3 {
+    max-width: 65%;
+    font-size: 0.95rem;
+  }
+  
+  /* Response section */
+  .response-content {
+    overflow-wrap: break-word;
+    padding-bottom: 180px; /* More padding for small screens */
+    max-height: fit-content;
+  }
+  
+  .response-mode {
+    padding: 1.25rem;
+    margin-bottom: 200px;
+  }
+  
+  .response-header {
+    flex-direction: column;
+  }
+  
+  /* Action buttons */
+  .response-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .translate-btn, .tts-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .close-response-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+}

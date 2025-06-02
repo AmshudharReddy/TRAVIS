@@ -1,4 +1,5 @@
 import React from "react";
+import './WelcomeMessage.css';
 
 const WelcomeMessage = () => {
   return (

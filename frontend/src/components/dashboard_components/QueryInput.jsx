@@ -1,4 +1,5 @@
 import React from "react";
+import './QueryInput.css';
 import { FaPaperPlane } from "react-icons/fa";
 
 const QueryInput = ({ query, setQuery, onSubmit, placeholder = "Ask me anything..." }) => {
