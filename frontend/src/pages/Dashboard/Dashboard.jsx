@@ -27,7 +27,7 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
   const [transformerMode, setTransformerMode] = useState(() => {
     // Try to get saved value from localStorage
     const saved = localStorage.getItem("transformerMode");
-    return saved !== null ? JSON.parse(saved) : true; // fallback default is true
+    return saved !== null ? JSON.parse(saved) : true; // DEFAULT: true
   });
 
   // Save to localStorage whenever transformerMode changes
@@ -291,7 +291,15 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
               />
             )}
             {!response && <div className="query-label"><p style={{ fontSize: "20px", textAlign: "center" }}>What's your query?</p></div>}
-            {!response && <QueryInput query={query} setQuery={setQuery} onSubmit={handleQuerySubmit} />}
+            {!response && (
+              <QueryInput
+                query={query}
+                setQuery={setQuery}
+                onSubmit={handleQuerySubmit}
+                transformerMode={transformerMode}
+                setTransformerMode={setTransformerMode}
+              />
+            )}
             {!response && <ButtonNavigation togglePopup={togglePopup} />}
             {!response && <Footer />}
             {response && <div className="response-bottom-spacer"></div>}
@@ -304,6 +312,9 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
               query={query}
               setQuery={setQuery}
               onSubmit={handleQuerySubmit}
+              // isProcessing={isProcessing}
+              transformerMode={transformerMode}
+              setTransformerMode={setTransformerMode}
               placeholder="Ask a follow-up question..."
             />
           </div>

@@ -27,12 +27,12 @@ const ResponseDisplay = ({
         </button>
       </div>
       <div className="response-content" ref={responseContentRef}>
-        <p><strong>Response:</strong>
+        <div><strong>Response:</strong>
           {/* {response} */}
           {response.split('\n').map((line, index) => (
             <p key={index}>{line}</p>
           ))}
-        </p>
+        </div>
 
         {/* {translatedResponse && (
           <div className="translated-content">
