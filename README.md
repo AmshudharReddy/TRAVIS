@@ -1,70 +1,148 @@
-# Getting Started with Create React App
+# 🧠 TRAVIS - AI-Powered Assistant for Visually Impaired Service Agents
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+TRAVIS is a **voice-driven, AI-powered banking assistant** designed to empower visually impaired bank agents. It processes spoken queries, classifies them into relevant banking categories using a transformer model, and retrieves customer data when needed—providing an **accessible interface with voice and visual support**.
 
-## Available Scripts
+## 🚀 Key Features
 
-In the project directory, you can run:
+### 🎙️ **Voice Interaction**
+- **Speech-to-Text**: Uses **Web Speech API** for converting voice input into text.
+- **Text-to-Speech (TTS)**: Provides voice responses for seamless communication.
+- **Auto-Read Mode**: Toggleable feature to read responses aloud automatically.
 
-### `npm start`
+### 🧠 **AI-Powered Query Handling**
+- **Query Classification**: Uses a transformer-based model for accurate banking category identification.
+- **Multi-Mode Response System**:
+  - **Transformer Mode**: Generates dynamic responses based on a custom PyTorch model.
+  - **Database Mode**: Fetches account-related details for queries requiring authentication.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🔁 **Banking Services Covered**
+- 💰 **Balance Inquiry**
+- 📄 **Account Statement**
+- 📌 **KYC Status**
+- 🏦 **Loan Approval & Status**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 👤 **Agent & Admin Dashboard**
+- **Agent Profile**: Accessible dashboard for visually impaired bank agents.
+- **Admin Panel**: Allows management of customer accounts (*Create, Update, Delete*).
 
-### `npm test`
+### ♿ **Accessibility Enhancements**
+- **Adjustable Font Sizes**
+- **High-Contrast Dark Mode**
+- **Voice Response Toggle for Optimal Usability**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🛠 Technology Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Layer        | Technology                     |
+|-------------|--------------------------------|
+| Frontend    | React, Web Speech API, TTS     |
+| Backend     | Node.js (Express), MongoDB     |
+| AI Model    | Python (FastAPI), PyTorch |
+| Database    | MongoDB                         |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📦 Installation & Setup
 
-### `npm run eject`
+### 🚀 Clone & Install Dependencies
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+git clone https://github.com/AmshudharReddy/TRAVIS
+cd TRAVIS
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### 🔹 Install Frontend
+```bash
+cd frontend
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### 🔹 Install Backend
+```bash
+cd ../backend
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### 🔹 Install AI Model Dependencies
+```bash
+cd ../services
+pip install -r requirements.txt
+```
 
-## Learn More
+📌 **Python Dependencies** (Ensure the following are installed):
+```yaml
+fastapi
+uvicorn
+torch
+scikit-learn
+nltk
+pickle5
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+⚠️ **If punkt tokenizer fails to download**, run:
+```python
+import nltk
+nltk.download('punkt')
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## ▶️ Running the Application
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+| Service    | Command                  | Runs At              |
+|------------|--------------------------|----------------------|
+| Frontend   | `npm start`               | `http://localhost:3000` |
+| Backend    | `node index.js`           | `http://localhost:5000` |
+| AI Model   | `python main.py`          | `http://localhost:5001` |
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🔌 API Endpoints
 
-### Making a Progressive Web App
+### **POST /api/classify**
+Classifies input queries into relevant banking categories.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### 📥 Request Example:
+```json
+{
+  "query": "Whhat if i lost my cheque book?"
+}
+```
 
-### Advanced Configuration
+#### 📤 Response Example:
+```json
+{
+  "category": "top_up_by_cash_or_cheque"
+}
+```
+```json
+{
+  "response": "if you lost your cheque deposit please provide the deposit date amount and method used i will review your account and investigate the issue"
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 📸 Screenshots (Optional)
+Include visuals to showcase:
+- **Agent Dashboard UI**
+- **Voice Input & Output Workflow**
+- **Dark Mode & Accessibility Features**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🙋‍♂️ Author
+**Amshudhar A.**  
+Building accessible, intelligent tools for real-world impact.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 📜 License
+MIT License – See `LICENSE` file for details.
+
+## 📌 Acknowledgements
+- PyTorch
+- FastAPI
+- React
+- MongoDB
+- Web Speech API
+- gTTS

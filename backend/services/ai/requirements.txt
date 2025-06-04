@@ -5,8 +5,10 @@ torchtext
 fastapi
 uvicorn
 pydantic
+pickle
 numpy
 regex
 nltk
 gtts
 spacy
+scikit-learn
