@@ -114,7 +114,7 @@ def sequential_transforms(*transforms):
 def tensor_transform(token_ids):
     return torch.cat((torch.tensor([BOS_IDX]), torch.tensor(token_ids), torch.tensor([EOS_IDX])))
 
-def translate_sentence(src_sentence: str, max_len: int = 5000):
+def translate_sentence(src_sentence: str, max_len: int = 50):
     global model, vocab_transform, text_transform
 
     model.eval()
@@ -168,8 +168,8 @@ def initialize_model():
     global model, vocab_transform, token_transform, text_transform
     try:
         vocab_transform = {
-            'en': torch.load( os.path.join(BASE_DIR,'vocab_transform_en_0.03.pt'), map_location=DEVICE),
-            'te': torch.load( os.path.join(BASE_DIR,'vocab_transform_te_0.03.pt'), map_location=DEVICE)
+            'en': torch.load( os.path.join(BASE_DIR,'vocab_transform_en.pt'), map_location=DEVICE),
+            'te': torch.load( os.path.join(BASE_DIR,'vocab_transform_te.pt'), map_location=DEVICE)
         }
         SRC_VOCAB_SIZE = len(vocab_transform['en'])
         TGT_VOCAB_SIZE = len(vocab_transform['te'])
@@ -187,7 +187,7 @@ def initialize_model():
         model_instance = Seq2SeqTransformer(NUM_ENCODER_LAYERS, NUM_DECODER_LAYERS, EMB_SIZE, NHEAD,
                                             SRC_VOCAB_SIZE, TGT_VOCAB_SIZE, FFN_HID_DIM, DROPOUT)
         model_instance.to(DEVICE)
-        model_instance.load_state_dict(torch.load( os.path.join(BASE_DIR,'transformer_eng_tel_scratch_full_data_0.03.pt') , map_location=DEVICE))
+        model_instance.load_state_dict(torch.load( os.path.join(BASE_DIR,'transformer_eng_tel_scratch_full_data.pt') , map_location=DEVICE))
         model_instance.eval()
         model = model_instance
         print("Translation Model loaded successfully!")
