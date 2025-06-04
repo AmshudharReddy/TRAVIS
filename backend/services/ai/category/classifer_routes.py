@@ -2,9 +2,13 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 import pickle
 import torch
-from nltk.tokenize import word_tokenize
+# from nltk.tokenize import word_tokenize
 from typing import Dict
 import os
+import re
+
+def word_tokenize(text):
+    return re.findall(r"\b\w+\b", text.lower())
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,14 +19,14 @@ EMBED_DIM = 128
 N_HEADS = 4
 NUM_ENCODER_LAYERS = 2
 FF_DIM = 256
-SAVE_PATH = 'best_transformer_model.pth'
+SAVE_PATH = 'best_transformer_model_90.pth'
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ======= Load vocab and label encoder =======
-with open( os.path.join(BASE_DIR,'vocab.pkl'), 'rb') as f:
+with open( os.path.join(BASE_DIR,'vocab_90.pkl'), 'rb') as f:
     vocab = pickle.load(f)
 
-with open( os.path.join(BASE_DIR,'label_encoder.pkl'), 'rb') as f:
+with open( os.path.join(BASE_DIR,'label_encoder_90.pkl'), 'rb') as f:
     label_encoder = pickle.load(f)
 
 # ======= Positional Encoding =======

@@ -1,1 +1,0 @@
-{"max_query_len": 84, "max_answer_len": 46, "vocab_size": 2894, "d_model": 128, "nhead": 4, "num_encoder_layers": 2, "num_classes": 77}
