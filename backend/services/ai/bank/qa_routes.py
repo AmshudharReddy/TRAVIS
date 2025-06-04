@@ -20,7 +20,7 @@ UNK_TOKEN = "<UNK>"
 qa_router = APIRouter(prefix="/api", tags=["Question Answering"])
 
 # Load vocab
-with open(os.path.join(BASE_DIR, 'model_artifacts/vocabulary2.json')) as f:
+with open(os.path.join(BASE_DIR, 'model_artifacts/vocabulary_0.02.json')) as f:
     vocab = json.load(f)
 
 inv_vocab = {v: k for k, v in vocab.items()}
@@ -79,10 +79,10 @@ class TransformerQA(nn.Module):
 
 # Load trained model
 model = TransformerQA(vocab_size).to(device)
-model.load_state_dict(torch.load(os.path.join(BASE_DIR, 'model_artifacts/transformer_qa_final2.pth'), map_location=device))
+model.load_state_dict(torch.load(os.path.join(BASE_DIR, 'model_artifacts/transformer_qa_final_0.02.pth'), map_location=device))
 model.eval()
 
-def generate_response(query, max_len=50):
+def generate_response(query, max_len=5000):
     try:
         # print(f"[DEBUG] Raw Query: {query}")
         query = preprocess(query)
