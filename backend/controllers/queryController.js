@@ -1,6 +1,7 @@
-const { processQuery } = require("../services/queryProcessor");
+const { processQuery } = require("../services/processors/queryProcessor");
+const { processCategory } = require("../services/processors/categoryProcessor");
+const { translateResponse } = require("../services/processors/translatorProcessor");
 const QueryHistory = require("../models/QueryHistory");
-const { translateResponse } = require("../services/translatorProcessor");
 const axios = require("axios");
 
 // Controller for processing user queries
@@ -25,6 +26,61 @@ const handleQuery = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+// Handle Category
+const handleCategory = async (req, res) => {
+  console.log('Handling category request...'); // Debug: Log start of request
+  try {
+    // Log incoming request details
+    console.log('Request body:', req.body);
+    console.log('User ID from token:', req.user?.id);
+
+    // Extract query and userId from request
+    const { query } = req.body;
+    const userId = req.user?.id;
+
+    // Validate inputs
+    if (!query) {
+      console.warn('Validation failed: Query is missing');
+      return res.status(400).json({ error: 'Query is required' });
+    }
+    if (!userId) {
+      console.warn('Validation failed: User ID is missing or invalid');
+      return res.status(401).json({ error: 'Unauthorized: Invalid or missing user token' });
+    }
+    if (typeof query !== 'string' || query.trim() === '') {
+      console.warn('Validation failed: Query is not a valid string');
+      return res.status(400).json({ error: 'Query must be a non-empty string' });
+    }
+
+    // Log query being processed
+    console.log(`Processing category for query: "${query}"`);
+
+    // Call processCategory to get the category
+    const { category } = await processCategory(query);
+    console.log(`Category determined: "${category}"`);
+
+    // Validate category response
+    if (!category || typeof category !== 'string') {
+      console.warn('Invalid category response:', category);
+      return res.status(500).json({ error: 'Failed to determine category' });
+    }
+
+    // Send successful response
+    res.json({ category });
+    console.log('Category response sent successfully');
+  } catch (error) {
+    // Log detailed error information
+    console.error('Error in handleCategory:', {
+      message: error.message,
+      stack: error.stack,
+      query: req.body.query,
+      userId: req.user?.id,
+    });
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+  }
+};
+
 
 // Controller for translating model response
 const handleTranslate = async (req, res) => {
@@ -84,5 +140,6 @@ module.exports = {
     handleQuery,
     handleTranslate,
     getQueryHistory,
-    handleTelugu
+    handleTelugu,
+    handleCategory
 };

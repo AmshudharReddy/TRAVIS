@@ -1,0 +1,11 @@
+torch
+torchvision
+torchaudio
+fastapi
+uvicorn
+pydantic
+numpy
+regex
+nltk
+gtts
+spacy

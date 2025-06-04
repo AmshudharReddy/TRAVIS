@@ -81,86 +81,110 @@ const Dashboard = ({ darkMode, setDarkMode, fontSize, setFontSize, showAlert }) 
     console.error(`[${errorType}]`, errorMessage);
   };
 
-  const handleQuerySubmit = async (e) => {
-    if (e) e.preventDefault();
-    if (!query.trim()) return;
 
-    const currentQuery = query.trim();
-    const authToken = sessionStorage.getItem("auth-token");
-    if (!authToken) {
-      showAlert("You need to be logged in to use this feature.");
-      return;
-    }
+const handleQuerySubmit = async (e) => {
+  if (e) e.preventDefault();
+  if (!query.trim()) return;
 
-    console.log("Submitting query:", currentQuery, "Mode:", transformerMode ? "transformer" : "customer");
+  const currentQuery = query.trim();
+  const authToken = sessionStorage.getItem("auth-token");
+  if (!authToken) {
+    showAlert("You need to be logged in to use this feature.");
+    return;
+  }
 
-    setLastQuery(currentQuery);
-    setQuery("");
-    setTranslatedResponse(null);
+  console.log("Submitting query:", currentQuery, "Mode:", transformerMode ? "transformer" : "customer");
 
-    const isSecureQuery = containsSensitiveInfo(currentQuery);
-    // Use current transformer mode state directly
-    const BASE_ROUTE = transformerMode ? "query" : "customers";
+  setLastQuery(currentQuery);
+  setQuery("");
+  setTranslatedResponse(null);
 
-    try {
-      if (!transformerMode && isSecureQuery) {
-        const accountNumber = await promptForAccountNumber();
-        if (!accountNumber) {
-          return;
-        }
+  const isSecureQuery = containsSensitiveInfo(currentQuery);
+  const BASE_ROUTE = transformerMode ? "query" : "customers";
 
-        console.log("Making secure query request to:", `${API_BASE_URL}/api/${BASE_ROUTE}/secureQuery`);
-        const response = await fetch(`${API_BASE_URL}/api/${BASE_ROUTE}/secureQuery`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "auth-token": authToken,
-          },
-          body: JSON.stringify({ query: currentQuery, accountNumber }),
-        });
+  try {
+    if (!transformerMode && isSecureQuery) {
+      // Handle secure queries
+      const accountNumber = await promptForAccountNumber();
+      if (!accountNumber) {
+        return;
+      }
 
-        const data = await response.json();
-        if (response.ok) {
-          setResponse(data.response || "No response received");
-          setResponseCategory(data.category || "Secure");
-          if (autoReadEnabled) speak(data.response);
-          trackQuery("secure", currentQuery, data.category);
-        } else {
-          setResponse(data.error || "An error occurred while processing the query");
-          setResponseCategory("Error");
-          logError("Secure query error", data.error);
-        }
+      console.log("Making secure query request to:", `${API_BASE_URL}/api/${BASE_ROUTE}/secureQuery`);
+      const response = await fetch(`${API_BASE_URL}/api/${BASE_ROUTE}/secureQuery`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": authToken,
+        },
+        body: JSON.stringify({ query: currentQuery, accountNumber }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setResponse(data.response || "No response received");
+        setResponseCategory(data.category || "Secure");
+        if (autoReadEnabled) speak(data.response);
+        trackQuery("secure", currentQuery, data.category);
       } else {
-        // Handle both transformer mode and non-secure customer queries
-        console.log("Making general query request to:", `${API_BASE_URL}/api/${BASE_ROUTE}/`);
-        const response = await fetch(`${API_BASE_URL}/api/${BASE_ROUTE}/`, {
+        setResponse(data.error || "An error occurred while processing the query");
+        setResponseCategory("Error");
+        logError("Secure query error", data.error);
+      }
+    } else {
+      // Handle transformer mode or non-secure customer queries
+      console.log("Making general query request to:", `${API_BASE_URL}/api/${BASE_ROUTE}/`);
+      // console.log("Making category prediction request to:", `http://127.0.0.1:5001/api/classify`);
+
+      // Perform both requests concurrently
+      const [queryResponse, catResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/${BASE_ROUTE}/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "auth-token": authToken,
           },
           body: JSON.stringify({ query: currentQuery }),
-        });
+        }).then(res => res.json().then(data => ({ ok: res.ok, data }))),
+        fetch(`${API_BASE_URL}/api/${BASE_ROUTE}/category`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": authToken,
+          },
+          body: JSON.stringify({ query: currentQuery }),
+        }).then(res => res.json().then(data => ({ ok: res.ok, data }))),
+      ]);
 
-        const data = await response.json();
-        if (response.ok) {
-          setResponse(data.response || "No response received");
-          setResponseCategory(data.category || "General");
-          if (autoReadEnabled) speak(data.response);
-          trackQuery("general", currentQuery, data.category);
-        } else {
-          setResponse(data.error || "An error occurred while processing the query");
-          setResponseCategory("Error");
-          logError("General query error", data.error);
-        }
+      // Handle query response
+      if (queryResponse.ok) {
+        setResponse(queryResponse.data.response || "No response received");
+      } else {
+        setResponse(queryResponse.data.error || "An error occurred while processing the query");
+        setResponseCategory("Error");
+        logError("General query error", queryResponse.data.error);
+        return; // Exit early if query response fails
       }
-    } catch (error) {
-      console.error("Request failed:", error);
-      setResponse("Network error. Please try again later.");
-      setResponseCategory("Error");
-      logError("Network error", error.message);
+
+      // Handle category response
+      if (catResponse.ok) {
+        setResponseCategory(catResponse.data.category || "General");
+      } else {
+        setResponseCategory("General"); // Fallback category
+        logError("Category prediction error", catResponse.data.error || "Unknown error");
+      }
+
+      // Additional actions if query response was successful
+      if (autoReadEnabled) speak(queryResponse.data.response);
+      trackQuery("general", currentQuery, catResponse.ok ? catResponse.data.category : "General");
     }
-  };
+  } catch (error) {
+    console.error("Request failed:", error);
+    setResponse("Network error. Please try again later.");
+    setResponseCategory("Error");
+    logError("Network error", error.message);
+  }
+};
 
   const promptForAccountNumber = () => {
     return new Promise((resolve) => {

@@ -6,6 +6,7 @@ import uvicorn
 from bank.qa_routes import qa_router
 from translation.translate_routes import translation_router
 from tts.tts_routes import tts_router
+from category.classifer_routes import router as classifier_router
 
 # Create main FastAPI app
 app = FastAPI(title="Multi-Service AI API", version="1.0.0")
@@ -23,6 +24,7 @@ app.add_middleware(
 app.include_router(qa_router)
 app.include_router(translation_router)
 app.include_router(tts_router)
+app.include_router(classifier_router)
 
 @app.get("/")
 async def root():
